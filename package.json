@@ -1,0 +1,13 @@
+{
+  "name": "neurodiver.co",
+  "version": "0.1.0",
+  "description": "NeuroDiver website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Kaiden See <kaiden@neurodiver.co>",
+  "license": "Proprietary",
+  "packageManager": "pnpm@10.29.3"
+}
