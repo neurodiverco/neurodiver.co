@@ -1,7 +1,8 @@
 # Agent Directives & Capabilities
 
 ## Project Context
-- **Frameworks:** HTML, CSS
+- **Frameworks:** Next.js, Tailwind CSS, shadcn/ui, usehooks
+- **Languages:** TypeScript, CSS
 
 ## Available Skills
 The agent is equipped with modular skills. Evaluate the task and use the appropriate skill when the trigger conditions are met.
