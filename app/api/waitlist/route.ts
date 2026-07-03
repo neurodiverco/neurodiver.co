@@ -8,23 +8,8 @@ interface WaitlistRequest {
   email?: string
 }
 
-function isD1Available(): boolean {
-  try {
-    return typeof WAITLIST_DB !== 'undefined'
-  } catch {
-    return false
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
-    if (!isD1Available()) {
-      return NextResponse.json(
-        { error: 'Database not configured. Please set up Cloudflare D1.' },
-        { status: 503 }
-      )
-    }
-
     const body: WaitlistRequest = await request.json()
     const { email } = body
 
@@ -93,13 +78,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
-      )
-    }
-
-    if (!isD1Available()) {
-      return NextResponse.json(
-        { error: 'Database not configured. Please set up Cloudflare D1.' },
-        { status: 503 }
       )
     }
   }
