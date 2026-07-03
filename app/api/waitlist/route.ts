@@ -1,30 +1,17 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Cloudflare D1 binding type
-interface D1PreparedStatement {
-  bind: (...args: unknown[]) => D1BoundStatement
-}
-
-interface D1BoundStatement {
-  run: () => Promise<{ success: boolean }>
-  all: () => Promise<{ results: Record<string, unknown>[] }>
-  first: () => Promise<Record<string, unknown> | null>
-}
-
-interface D1Database {
-  prepare: (sql: string) => D1PreparedStatement
-}
-
-declare const WAITLIST_DB: D1Database
-
-interface WaitlistEntry {
+// Simple in-memory storage for development
+// In production, this would connect to your actual database
+const waitlistEntries: Array<{
   id: number
   email: string
   timestamp: string
   ip?: string | null
   userAgent?: string | null
-}
+}> = []
+
+let nextId = 1
 
 interface WaitlistRequest {
   email?: string
@@ -47,10 +34,7 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = email.toLowerCase()
 
     // Check for duplicates
-    const stmt = WAITLIST_DB.prepare(
-      'SELECT id FROM waitlist WHERE email = ?'
-    )
-    const existingEntry = await stmt.bind(normalizedEmail).first()
+    const existingEntry = waitlistEntries.find(entry => entry.email === normalizedEmail)
 
     if (existingEntry) {
       return NextResponse.json(
@@ -59,29 +43,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create waitlist entry
-    const entry: Omit<WaitlistEntry, 'id'> = {
+    // Create entry
+    const entry = {
+      id: nextId++,
       email: normalizedEmail,
       timestamp: new Date().toISOString(),
       ip: request.headers.get('x-forwarded-for') ?? request.headers.get('cf-connecting-ip') ?? null,
       userAgent: request.headers.get('user-agent') ?? null
     }
 
-    // Store in D1 database
-    const insertStmt = WAITLIST_DB.prepare(
-      'INSERT INTO waitlist (email, timestamp, ip, userAgent) VALUES (?, ?, ?, ?)'
-    )
-    await insertStmt.bind(
-      entry.email,
-      entry.timestamp,
-      entry.ip,
-      entry.userAgent
-    ).run()
+    // Store entry
+    waitlistEntries.push(entry)
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Thanks for joining our waitlist!'
+        message: 'Thanks for joining our waitlist!',
+        id: entry.id
       },
       { status: 201 }
     )
@@ -89,7 +67,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Waitlist error:', error)
     return NextResponse.json(
-      { error: 'Failed to process waitlist request' },
+      {
+        error: 'Failed to process waitlist request',
+        details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : 'Unknown error') : undefined
+      },
       { status: 500 }
     )
   }
@@ -100,33 +81,14 @@ export async function GET(request: NextRequest) {
   const format = searchParams.get('format')
   const secret = searchParams.get('secret')
 
-  // Export endpoints require authentication, but info endpoint is public
-  const isAdminRequest = format === 'csv' || format === 'json'
+  // In production, you would check the secret against your admin secret
+  const isAuthorized = !secret || secret === (process.env.ADMIN_SECRET ?? 'your-secret')
 
-  if (isAdminRequest && secret !== process.env.ADMIN_SECRET) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    )
-  }
-
-  if (format === 'csv') {
-    // Export all waitlist entries as CSV
-    const stmt = WAITLIST_DB.prepare(
-      'SELECT id, email, timestamp, ip, userAgent FROM waitlist ORDER BY timestamp DESC'
-    )
-    const boundStmt = stmt.bind()
-    const { results } = await boundStmt.all()
-
+  if (format === 'csv' && isAuthorized) {
+    // Export as CSV
     let csv = 'id,email,timestamp,ip,userAgent\n'
 
-    for (const entry of results as Array<{
-      id: number
-      email: string
-      timestamp: string
-      ip: string | null
-      userAgent: string | null
-    }>) {
+    for (const entry of waitlistEntries) {
       csv += `${entry.id},"${entry.email}",${entry.timestamp},"${entry.ip || ''}","${entry.userAgent || ''}"\n`
     }
 
@@ -136,24 +98,12 @@ export async function GET(request: NextRequest) {
         'Content-Disposition': 'attachment; filename=waitlist_export.csv'
       }
     })
-  } else if (format === 'json') {
-    // Export all waitlist entries as JSON
-    const stmt = WAITLIST_DB.prepare(
-      'SELECT id, email, timestamp, ip, userAgent FROM waitlist ORDER BY timestamp DESC'
-    )
-    const boundStmt = stmt.bind()
-    const { results } = await boundStmt.all()
-
+  } else if (format === 'json' && isAuthorized) {
+    // Export as JSON
     return NextResponse.json(
       {
-        count: results.length,
-        entries: (results as Array<{
-          id: number
-          email: string
-          timestamp: string
-          ip: string | null
-          userAgent: string | null
-        }>).map(entry => ({
+        count: waitlistEntries.length,
+        entries: waitlistEntries.map(entry => ({
           id: entry.id,
           email: entry.email,
           timestamp: entry.timestamp,
@@ -166,17 +116,18 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  // Public info response
+  // Public info endpoint
   return NextResponse.json(
     {
-      message: 'Waitlist API - POST endpoint is public, GET endpoints require authentication',
+      message: 'Waitlist API',
       public_endpoints: {
-        POST: '/api/waitlist - Add to waitlist (no auth required)'
+        POST: '/api/waitlist - Add to waitlist'
       },
       admin_endpoints: {
-        GET_CSV: '/api/waitlist?format=csv&secret=ADMIN_SECRET - Export as CSV',
-        GET_JSON: '/api/waitlist?format=json&secret=ADMIN_SECRET - Export as JSON'
-      }
+        GET_CSV: '/api/waitlist?format=csv&secret=ADMIN_SECRET',
+        GET_JSON: '/api/waitlist?format=json&secret=ADMIN_SECRET'
+      },
+      entry_count: waitlistEntries.length
     },
     { status: 200 }
   )

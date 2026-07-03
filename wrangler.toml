@@ -24,3 +24,18 @@ ADMIN_SECRET = "your_secure_admin_secret_here" # Change this in production!
 binding = "WAITLIST_DB"
 database_name = "neurodiver-waitlist"
 database_id = "a7da8697-3fb6-45ca-9865-8af32ddfb302"
+
+[observability]
+enabled = false
+head_sampling_rate = 1
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+persist = true
+invocation_logs = true
+
+[observability.traces]
+enabled = false
+persist = true
+head_sampling_rate = 1
