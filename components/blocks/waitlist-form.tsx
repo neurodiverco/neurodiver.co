@@ -70,10 +70,22 @@ export default function WaitlistForm() {
         disabled={status !== 'idle'}
       >
         {status === 'idle' ? 'Join the waitlist' :
-         status === 'submitting' ? 'Joining...' :
-         status === 'success' ? 'We’ll be in touch when we launch.' :
-         errorMessage}
+          status === 'submitting' ? 'Joining...' :
+          'Submitted'}
       </button>
+
+      {/* System response message - separate from button */}
+      {status === 'success' && (
+        <div className="mt-3 p-3 bg-green-100/80 dark:bg-green-900/20 rounded-lg text-green-950 dark:text-green-300 text-sm text-center">
+          ✅ Thanks! We’ll be in touch when we launch.
+        </div>
+      )}
+
+      {status === 'error' && errorMessage && (
+        <div className="mt-3 p-3 bg-red-100/80 dark:bg-red-900/20 rounded-lg text-red-950 dark:text-red-300 text-sm text-center">
+          ❌ {errorMessage}
+        </div>
+      )}
     </form>
   )
 }
