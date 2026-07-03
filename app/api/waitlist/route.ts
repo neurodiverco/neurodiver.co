@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-
-// Cloudflare D1 binding type
-declare const WAITLIST_DB: D1Database
+import { getCloudflareContext } from '@opennextjs/cloudflare'; // Or '@cloudflare/next-on-pages'
 
 interface WaitlistRequest {
   email?: string
@@ -10,6 +8,11 @@ interface WaitlistRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Retrieve the runtime context provided by Cloudflare
+    const { env } = await getCloudflareContext();
+    // Replace "DB" with your exact D1 binding name from wrangler.toml
+    const WAITLIST_DB: D1Database = env.WAITLIST_DB;
+
     const body: WaitlistRequest = await request.json()
     const { email } = body
 
@@ -67,6 +70,11 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  // Retrieve the runtime context provided by Cloudflare
+  const { env } = await getCloudflareContext();
+  // Replace "DB" with your exact D1 binding name from wrangler.toml
+  const WAITLIST_DB: D1Database = env.WAITLIST_DB;
+
   const { searchParams } = new URL(request.url)
   const format = searchParams.get('format')
   const secret = searchParams.get('secret')
