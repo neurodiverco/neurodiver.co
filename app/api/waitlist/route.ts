@@ -1,95 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Database storage - uses D1 in production, in-memory in development
-const waitlistEntries: Array<{
-  id: number
-  email: string
-  timestamp: string
-  ip?: string | null
-  userAgent?: string | null
-}> = []
-
-let nextId = 1
-
-// Cloudflare D1 binding (available in production)
+// Cloudflare D1 binding (required for production)
 declare const WAITLIST_DB: D1Database
-
-// Check if we're in production with D1 available
-const isProduction = process.env.NODE_ENV === 'production' && typeof WAITLIST_DB !== 'undefined'
-
-async function getWaitlistEntries(): Promise<Array<{
-  id: number
-  email: string
-  timestamp: string
-  ip?: string | null
-  userAgent?: string | null
-}>> {
-  if (isProduction) {
-    try {
-      const result = await WAITLIST_DB.prepare('SELECT id, email, timestamp, ip, userAgent FROM waitlist ORDER BY timestamp DESC').all()
-      return result.results || []
-    } catch (error) {
-      console.error('D1 query failed, falling back to memory:', error)
-      return waitlistEntries
-    }
-  }
-  return waitlistEntries
-}
-
-async function addWaitlistEntry(email: string, timestamp: string, ip: string | null, userAgent: string | null): Promise<number> {
-  const entry = {
-    id: nextId++,
-    email,
-    timestamp,
-    ip,
-    userAgent
-  }
-
-  if (isProduction) {
-    try {
-      // Check for duplicates in D1
-      const existing = await WAITLIST_DB.prepare('SELECT id FROM waitlist WHERE email = ?')
-        .bind(email)
-        .first()
-
-      if (existing) {
-        throw new Error('Email already on waitlist')
-      }
-
-      // Insert into D1
-      await WAITLIST_DB.prepare('INSERT INTO waitlist (email, timestamp, ip, userAgent) VALUES (?, ?, ?, ?)')
-        .bind(email, timestamp, ip, userAgent)
-        .run()
-
-      // Get the actual ID from D1
-      const result = await WAITLIST_DB.prepare('SELECT last_insert_rowid() as id').first()
-      return result.id
-    } catch (error) {
-      console.error('D1 insert failed, falling back to memory:', error)
-      waitlistEntries.push(entry)
-      return entry.id
-    }
-  }
-
-  waitlistEntries.push(entry)
-  return entry.id
-}
-
-async function checkDuplicateEmail(email: string): Promise<boolean> {
-  if (isProduction) {
-    try {
-      const result = await WAITLIST_DB.prepare('SELECT id FROM waitlist WHERE email = ?')
-        .bind(email)
-        .first()
-      return !!result
-    } catch (error) {
-      console.error('D1 duplicate check failed, falling back to memory:', error)
-      return waitlistEntries.some(entry => entry.email === email)
-    }
-  }
-  return waitlistEntries.some(entry => entry.email === email)
-}
 
 interface WaitlistRequest {
   email?: string
@@ -111,40 +24,85 @@ export async function POST(request: NextRequest) {
     // Normalize email
     const normalizedEmail = email.toLowerCase()
 
-    // Check for duplicates
-    const isDuplicate = await checkDuplicateEmail(normalizedEmail)
+    // Check if D1 is available
+    if (typeof WAITLIST_DB === 'undefined') {
+      return NextResponse.json(
+        {
+          error: 'Database not configured. Please set up Cloudflare D1.',
+          setup_required: true
+        },
+        { status: 503 }
+      )
+    }
 
-    if (isDuplicate) {
+    // Check for duplicates in D1
+    let existingEntry
+    try {
+      existingEntry = await WAITLIST_DB.prepare('SELECT id FROM waitlist WHERE email = ?')
+        .bind(normalizedEmail)
+        .first()
+    } catch (error) {
+      console.error('D1 duplicate check failed:', error)
+      return NextResponse.json(
+        {
+          error: 'Database query failed',
+          details: 'Failed to check for duplicate email',
+          database_error: true
+        },
+        { status: 500 }
+      )
+    }
+
+    if (existingEntry) {
       return NextResponse.json(
         { error: 'Email already on waitlist' },
         { status: 409 }
       )
     }
 
-    // Create and store entry
-    const entryId = await addWaitlistEntry(
-      normalizedEmail,
-      new Date().toISOString(),
-      request.headers.get('x-forwarded-for') ?? request.headers.get('cf-connecting-ip') ?? null,
-      request.headers.get('user-agent') ?? null
-    )
+    // Add to D1 database
+    try {
+      await WAITLIST_DB.prepare('INSERT INTO waitlist (email, timestamp, ip, userAgent) VALUES (?, ?, ?, ?)')
+        .bind(
+          normalizedEmail,
+          new Date().toISOString(),
+          request.headers.get('x-forwarded-for') ?? request.headers.get('cf-connecting-ip') ?? null,
+          request.headers.get('user-agent') ?? null
+        )
+        .run()
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Thanks for joining our waitlist!',
-        id: entryId,
-        database: isProduction ? 'D1' : 'memory'
-      },
-      { status: 201 }
-    )
+      // Get the inserted ID
+      const result = await WAITLIST_DB.prepare('SELECT last_insert_rowid() as id').first()
+      const entryId = result.id
+
+      return NextResponse.json(
+        {
+          success: true,
+          message: 'Thanks for joining our waitlist!',
+          id: entryId,
+          database: 'D1'
+        },
+        { status: 201 }
+      )
+    } catch (error) {
+      console.error('D1 insert failed:', error)
+      return NextResponse.json(
+        {
+          error: 'Failed to save to database',
+          details: 'Database insertion failed',
+          database_error: true
+        },
+        { status: 500 }
+      )
+    }
 
   } catch (error) {
     console.error('Waitlist error:', error)
     return NextResponse.json(
       {
         error: 'Failed to process waitlist request',
-        details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : 'Unknown error') : undefined
+        details: error instanceof Error ? error.message : 'Unknown error',
+        database_error: true
       },
       { status: 500 }
     )
@@ -156,60 +114,130 @@ export async function GET(request: NextRequest) {
   const format = searchParams.get('format')
   const secret = searchParams.get('secret')
 
-  // In production, you would check the secret against your admin secret
-  const isAuthorized = !secret || secret === (process.env.ADMIN_SECRET ?? 'your-secret')
-
-  if (format === 'csv' && isAuthorized) {
-    // Export as CSV
-    const entries = await getWaitlistEntries()
-    let csv = 'id,email,timestamp,ip,userAgent\n'
-
-    for (const entry of entries) {
-      csv += `${entry.id},"${entry.email}",${entry.timestamp},"${entry.ip || ''}","${entry.userAgent || ''}"\n`
-    }
-
-    return new NextResponse(csv, {
-      headers: {
-        'Content-Type': 'text/csv',
-        'Content-Disposition': 'attachment; filename=waitlist_export.csv'
-      }
-    })
-  } else if (format === 'json' && isAuthorized) {
-    // Export as JSON
-    const entries = await getWaitlistEntries()
+  // Check if D1 is available
+  if (typeof WAITLIST_DB === 'undefined') {
     return NextResponse.json(
       {
-        count: entries.length,
-        entries: entries.map(entry => ({
-          id: entry.id,
-          email: entry.email,
-          timestamp: entry.timestamp,
-          ip: entry.ip,
-          userAgent: entry.userAgent,
-          formattedDate: new Date(entry.timestamp).toISOString()
-        })),
-        database: isProduction ? 'D1' : 'memory'
+        error: 'Database not configured',
+        setup_required: true
       },
-      { status: 200 }
+      { status: 503 }
     )
   }
 
+  // Verify admin secret
+  const isAuthorized = secret === process.env.ADMIN_SECRET
+  if (!isAuthorized) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    )
+  }
+
+  if (format === 'csv') {
+    // Export as CSV
+    try {
+      const result = await WAITLIST_DB.prepare(
+        'SELECT id, email, timestamp, ip, userAgent FROM waitlist ORDER BY timestamp DESC'
+      ).all()
+
+      const entries = result.results || []
+      let csv = 'id,email,timestamp,ip,userAgent\n'
+
+      for (const entry of entries) {
+        csv += `${entry.id},"${entry.email}",${entry.timestamp},"${entry.ip || ''}","${entry.userAgent || ''}"\n`
+      }
+
+      return new NextResponse(csv, {
+        headers: {
+          'Content-Type': 'text/csv',
+          'Content-Disposition': 'attachment; filename=waitlist_export.csv'
+        }
+      })
+    } catch (error) {
+      console.error('D1 export failed:', error)
+      return NextResponse.json(
+        {
+          error: 'Failed to export data',
+          details: 'Database query failed',
+          database_error: true
+        },
+        { status: 500 }
+      )
+    }
+  } else if (format === 'json') {
+    // Export as JSON
+    try {
+      const result = await WAITLIST_DB.prepare(
+        'SELECT id, email, timestamp, ip, userAgent FROM waitlist ORDER BY timestamp DESC'
+      ).all()
+
+      const entries = result.results || []
+
+      return NextResponse.json(
+        {
+          count: entries.length,
+          entries: (entries as Array<{
+            id: number
+            email: string
+            timestamp: string
+            ip: string | null
+            userAgent: string | null
+          }>).map(entry => ({
+            id: entry.id,
+            email: entry.email,
+            timestamp: entry.timestamp,
+            ip: entry.ip,
+            userAgent: entry.userAgent,
+            formattedDate: new Date(entry.timestamp).toISOString()
+          })),
+          database: 'D1'
+        },
+        { status: 200 }
+      )
+    } catch (error) {
+      console.error('D1 export failed:', error)
+      return NextResponse.json(
+        {
+          error: 'Failed to export data',
+          details: 'Database query failed',
+          database_error: true
+        },
+        { status: 500 }
+      )
+    }
+  }
+
   // Public info endpoint
-  const entries = await getWaitlistEntries()
-  return NextResponse.json(
-    {
-      message: 'Waitlist API',
-      public_endpoints: {
-        POST: '/api/waitlist - Add to waitlist'
+  try {
+    const result = await WAITLIST_DB.prepare('SELECT COUNT(*) as count FROM waitlist').first()
+    const count = result.count || 0
+
+    return NextResponse.json(
+      {
+        message: 'Waitlist API - D1 Database Active',
+        public_endpoints: {
+          POST: '/api/waitlist - Add to waitlist'
+        },
+        admin_endpoints: {
+          GET_CSV: '/api/waitlist?format=csv&secret=ADMIN_SECRET',
+          GET_JSON: '/api/waitlist?format=json&secret=ADMIN_SECRET'
+        },
+        entry_count: count,
+        database: 'D1 (Cloudflare)',
+        status: 'active'
       },
-      admin_endpoints: {
-        GET_CSV: '/api/waitlist?format=csv&secret=ADMIN_SECRET',
-        GET_JSON: '/api/waitlist?format=json&secret=ADMIN_SECRET'
+      { status: 200 }
+    )
+  } catch (error) {
+    console.error('D1 info query failed:', error)
+    return NextResponse.json(
+      {
+        error: 'Failed to get database info',
+        details: 'Database query failed',
+        database_error: true
       },
-      entry_count: entries.length,
-      database: isProduction ? 'D1 (Cloudflare)' : 'memory (development)',
-      environment: process.env.NODE_ENV
-    },
-    { status: 200 }
-  )
+      { status: 500 }
+    )
+  }
 }
