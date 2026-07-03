@@ -76,7 +76,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Energy Tracker */}
-            <div className="feat-card">
+            <div className="feat-card grow basis-0">
               <div className="feat-icon">
                 {/* battery-medium icon */}
                 <svg
@@ -102,7 +102,7 @@ export default function Home() {
             </div>
 
             {/* Strategy Deck */}
-            <div className="feat-card">
+            <div className="feat-card grow basis-0">
               <div className="feat-icon">
                 {/* layers icon */}
                 <svg
@@ -128,7 +128,7 @@ export default function Home() {
             </div>
 
             {/* Coworking Sessions */}
-            <div className="feat-card">
+            <div className="feat-card grow basis-0">
               <div className="feat-icon">
                 {/* users-round icon */}
                 <svg
