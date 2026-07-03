@@ -1,0 +1,20 @@
+# Cloudflare Pages configuration for neurodiver.co
+name = "neurodiver-co"
+compatibility_date = "2026-07-03"
+
+# Next.js specific configuration
+[build]
+command = "pnpm build"
+
+# Production build output directory
+[build.upload]
+format = "service-worker"
+directory = ".next"
+
+# Environment variables (add your production variables here)
+[vars]
+NODE_ENV = "production"
+
+# Pages Functions configuration
+[pages]
+build_output_dir = ".next"
