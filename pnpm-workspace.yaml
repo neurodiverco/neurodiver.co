@@ -6,3 +6,6 @@ allowBuilds:
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+minimumReleaseAgeExclude:
+  - miniflare@4.20260701.0
+  - wrangler@4.107.0

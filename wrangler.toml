@@ -1,20 +1,26 @@
-# Cloudflare Pages configuration for neurodiver.co
+"$schema" = "./node_modules/wrangler/config-schema.json"
+main = ".open-next/worker.js"
 name = "neurodiver-co"
 compatibility_date = "2026-07-03"
+compatibility_flags = [ "nodejs_compat" ]
+# format = "service-worker"
+# directory = ".next"
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
 
 # Next.js specific configuration
 [build]
 command = "pnpm build"
 
-# Production build output directory
-[build.upload]
-format = "service-worker"
-directory = ".next"
-
 # Environment variables (add your production variables here)
 [vars]
 NODE_ENV = "production"
+ADMIN_SECRET = "your_secure_admin_secret_here" # Change this in production!
 
-# Pages Functions configuration
-[pages]
-build_output_dir = ".next"
+# Cloudflare D1 database for waitlist storage
+[[d1_databases]]
+binding = "WAITLIST_DB"
+database_name = "neurodiver-waitlist"
+database_id = "a7da8697-3fb6-45ca-9865-8af32ddfb302"

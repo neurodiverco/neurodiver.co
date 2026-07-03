@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react";
+import WaitlistForm from "./waitlist-form";
 
 export default function Hero() {
   return <section className="hero" id="home">
@@ -45,18 +46,7 @@ export default function Hero() {
           A productivity toolkit designed for neurodivergent adults. Track your energy, discover personalized strategies, and build sustainable ways of working.
         </p>
 
-        <form className="flex flex-col sm:flex-row gap-x-3 gap-y-4 w-full max-w-md flex-wrap justify-center" /*onSubmit={(e) => { e.preventDefault(); return false; }}*/>
-          <input
-            type="email"
-            className="flex-1 min-w-55 py-3 px-4 placeholder:text-muted-foreground border border-sidebar-border/50 active:border-sidebar-border focus:border-sidebar-border focus:bg-accent-foreground/10 rounded-lg text-sidebar-foreground outline-none transition"
-            placeholder="Your email address"
-            aria-label="Email address"
-            autoComplete="email"
-          />
-          <button type="submit" className="items-center gap-2 font-semibold tracking-[0.01em] px-5 py-2.5 rounded-lg border-0 cursor-pointer transition text-nowrap bg-accent text-accent-foreground hover:brightness-125 active:scale-[98%] w-full sm:w-auto">
-            Join the waitlist
-          </button>
-        </form>
+        <WaitlistForm />
 
         {/*<div className="hero-actions">
           <a href="#waitlist" className="btn btn-primary">

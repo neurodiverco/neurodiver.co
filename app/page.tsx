@@ -3,6 +3,7 @@ import Header from '@/components/blocks/header';
 import Hero from '@/components/blocks/hero';
 import { cn } from '@/lib/utils';
 import Logo from '@/components/logo';
+import WaitlistForm from '@/components/blocks/waitlist-form';
 // import useIsMobile from '@/hooks/use-is-mobile';
 
 export const metadata: Metadata = {
@@ -221,18 +222,7 @@ export default function Home() {
               among the first to shape how the product develops.
             </p>
 
-            <form className="flex flex-col sm:flex-row gap-x-3 gap-y-4 w-full max-w-md flex-wrap justify-center" /*onSubmit={(e) => { e.preventDefault(); return false; }}*/>
-              <input
-                type="email"
-                className="flex-1 min-w-55 py-3 px-4 placeholder:text-muted-foreground border border-sidebar-border/50 active:border-sidebar-border focus:border-sidebar-border focus:bg-accent-foreground/10 rounded-lg text-sidebar-foreground outline-none transition"
-                placeholder="Your email address"
-                aria-label="Email address"
-                autoComplete="email"
-              />
-              <button type="submit" className="items-center gap-2 font-semibold tracking-[0.01em] px-5 py-2.5 rounded-lg border-0 cursor-pointer transition text-nowrap bg-accent text-accent-foreground hover:brightness-125 active:scale-[98%] w-full sm:w-auto">
-                Join the waitlist
-              </button>
-            </form>
+            <WaitlistForm />
 
             <p className="cta-note">
               No marketing emails. We&apos;ll write when there&apos;s something
