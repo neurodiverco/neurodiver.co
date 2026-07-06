@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Menu, X } from "lucide-react"
 import Logo from "@/components/logo";
+import Link from "next/link";
 
 const navItems: Array<{ label: string; href: string; active?: string }> = [
   // { label: "Product", href: "#product", active: false },
@@ -17,12 +18,12 @@ export default function Header() {
   return (
     <section className="bg-sidebar">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 sm:px-10 after:content-none">
-        <a
-          href="#"
+        <Link
+          href="/"
           className="flex items-center gap-2 font-semibold tracking-tight text-sidebar-foreground"
         >
           <Logo className="-ml-1.5" />
-        </a>
+        </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
           {navItems.map((item) => (

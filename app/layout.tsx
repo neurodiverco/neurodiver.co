@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Atkinson_Hyperlegible_Next, Domine } from "next/font/google";
 import "./globals.css";
 import "./style.css";
+import Header from "@/components/blocks/header";
+import Footer from "@/components/blocks/footer";
 
 const fontSans = Atkinson_Hyperlegible_Next({
   fallback: ["system-ui", "-apple-system", "sans-serif"],
@@ -29,7 +31,11 @@ export default function RootLayout({
     <html
       lang="en"
     >
-      <body className={`${fontSans.variable} ${fontSerif.variable} antialiased min-h-full flex flex-col overflow-x-hidden scroll-smooth`}>{children}</body>
+      <body className={`${fontSans.variable} ${fontSerif.variable} antialiased min-h-screen flex flex-col overflow-x-hidden scroll-smooth`}>
+        <Header />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
