@@ -15,8 +15,7 @@ async function bootstrap() {
   );
 
   // CORS — FRONTEND_URL can be a comma-separated list of allowed origins
-  const rawOrigins =
-    process.env.FRONTEND_URL ?? 'http://localhost:5173,http://localhost:5174';
+  const rawOrigins = process.env.FRONTEND_URL ?? 'https://neurodiver.co';
   const allowedOrigins = rawOrigins.split(',').map((o) => o.trim());
 
   app.enableCors({
