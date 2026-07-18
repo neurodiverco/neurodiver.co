@@ -35,7 +35,7 @@ export default function WaitlistForm({
     setError(null);
 
     try {
-      const apiBase = import.meta.env.VITE_API_URL ?? "http://localhost:3000/api";
+      const apiBase = import.meta.env.VITE_API_URL ?? "https://neurodiver.co/api";
       const res = await fetch(`${apiBase}/waitlist/join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
