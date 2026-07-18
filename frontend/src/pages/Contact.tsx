@@ -90,7 +90,7 @@ export default function Contact() {
 
     setSubmitting(true);
 
-    const apiBase = import.meta.env.VITE_API_URL ?? "https://neurodiver.co/api";
+    const apiBase = import.meta.env.VITE_API_URL ?? "https://neurodiver-co.onrender.com/api";
 
     const endpoint =
       audience === "individual"

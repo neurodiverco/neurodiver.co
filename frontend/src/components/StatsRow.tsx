@@ -57,7 +57,7 @@ function useWaitlistCount(initial: number) {
   const [count, setCount] = useState(initial);
 
   useEffect(() => {
-    const apiBase = (import.meta as ImportMeta & { env: Record<string, string> }).env.VITE_API_URL ?? "https://neurodiver.co/api";
+    const apiBase = (import.meta as ImportMeta & { env: Record<string, string> }).env.VITE_API_URL ?? "https://neurodiver-co.onrender.com/api";
     const es = new EventSource(`${apiBase}/waitlist/count-stream`);
 
     es.onmessage = (event: MessageEvent) => {
