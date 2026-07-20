@@ -16,11 +16,10 @@ const values = [
 
 // Replace with the real milestones/dates.
 const milestones = [
-  { year: "2023", title: "The spark", text: "A co-founder's own burnout led to a simple question: why does every productivity tool assume the same brain?" },
-  { year: "2024", title: "First prototype", text: "Built a rough energy-tracking tool for a handful of friends — and it stuck." },
-  { year: "2024", title: "200+ conversations", text: "Interviewed neurodivergent adults across industries to find real, shared friction points." },
-  { year: "2025", title: "Clinical partnerships", text: "Began working with clinical psychologists to vet every strategy in the product." },
-  { year: "2026", title: "Early access", text: "Opened the waitlist and started building in public with the community." },
+  { title: "It Started with a Question", text: "Why does work feel so much harder for some people than others—even when they're just as capable? This question became the foundation of NeuroDiver." },
+  { title: "Building with Lived Experience", text: "Instead of assuming what people needed, we listened, tested, and designed alongside neurodivergent working adults to understand the everyday friction they face at work." },
+  { title: "From Research to Pilot", text: "We turned those insights into practical tools—from work energy check-ins to strategy guides and body doubling sessions—and began piloting them with real users." },
+  { title: "Building What's Next", text: "Today, we're continuing to refine NeuroDiver with feedback from individuals and organisations as we work towards a more inclusive future of work." },
 ];
 
 /* --------------------------- Sub-parts --------------------------- */
@@ -106,8 +105,8 @@ function TimelineItem({ milestone, index }: { milestone: (typeof milestones)[num
         transition={{ duration: 0.6, ease: "easeOut" }}
         className={`w-full text-left md:w-[42%] ${isLeft ? "md:pr-10 md:text-right" : "md:pl-10 md:text-left"}`}
       >
-        <p className="text-xs font-semibold uppercase tracking-widest text-orange">{milestone.year}</p>
-        <h3 className="mt-1 font-serif text-xl text-primary md:text-2xl">{milestone.title}</h3>
+        {/* <p className="text-xs font-semibold uppercase tracking-widest text-orange">{milestone.year}</p> */}
+        <h3 className="mt-1 font-serif text-xl text-orange md:text-2xl">{milestone.title}</h3>
         <p className="mt-2 text-primary/70 leading-relaxed">{milestone.text}</p>
       </motion.div>
 
@@ -246,7 +245,7 @@ export default function AboutUs() {
             Our journey
           </p>
           <h2 className="mt-3 font-serif text-2xl text-primary sm:text-3xl md:text-4xl">
-            From spreadsheet to early access.
+            One milestone at a time.
           </h2>
         </div>
 

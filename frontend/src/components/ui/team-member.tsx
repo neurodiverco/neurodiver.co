@@ -7,31 +7,32 @@ type TeamMember = {
 const teamMembers: TeamMember[] = [
   {
     name: "Dhinesha",
-    role: "Founder & CEO",
+    role: " Co-Founder & CEO",
     src:
       "images/dhinesha.jpg",
   },
-  {
-    name: "Pavitraa",
-    role: "CEO",
-    src:
-      "images/pavi.jpg",
-  },
-  {
+    {
     name: "Adibah",
-    role: "HR",
+    role: "Co-Founder & COO",
     src:
       "images/adibah.jpg",
   },
   {
+    name: "Pavitraa",
+    role: "Co-Founder & Head of Product and Strategy",
+    src:
+      "images/pavi.jpg",
+  },
+
+  {
     name: "Ridhwan",
-    role: "HR",
+    role: "Co-Founder & Head of Community and Partnerships ",
     src:
       "images/ridhwan.jpg",
   },
   {
     name: "Kaiden",
-    role: "Product Manager",
+    role: "Tech Lead",
     src:
       "images/kaiden.jpg",
   },
