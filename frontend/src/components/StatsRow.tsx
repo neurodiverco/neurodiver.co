@@ -53,35 +53,35 @@ function useCountUp(target: number, duration = 1800) {
  * Connects to the SSE endpoint and keeps the count live in real-time.
  * Falls back to `initial` until the stream delivers its first message.
  */
-function useWaitlistCount(initial: number) {
-  const [count, setCount] = useState(initial);
+// function useWaitlistCount(initial: number) {
+//   const [count, setCount] = useState(initial);
 
-  useEffect(() => {
-    const apiBase = (import.meta as ImportMeta & { env: Record<string, string> }).env.VITE_API_URL ?? "https://neurodiver-co.onrender.com/api";
-    const es = new EventSource(`${apiBase}/waitlist/count-stream`);
+//   useEffect(() => {
+//     const apiBase = (import.meta as ImportMeta & { env: Record<string, string> }).env.VITE_API_URL ?? "https://neurodiver-co.onrender.com/api";
+//     const es = new EventSource(`${apiBase}/waitlist/count-stream`);
 
-    es.onmessage = (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data as string) as { count: number };
-        if (typeof data.count === "number") {
-          setCount(data.count);
-        }
-      } catch {
-        // malformed frame — ignore
-      }
-    };
+//     es.onmessage = (event: MessageEvent) => {
+//       try {
+//         const data = JSON.parse(event.data as string) as { count: number };
+//         if (typeof data.count === "number") {
+//           setCount(data.count);
+//         }
+//       } catch {
+//         // malformed frame — ignore
+//       }
+//     };
 
-    es.onerror = () => {
-      // connection dropped — EventSource auto-reconnects, so just wait
-    };
+//     es.onerror = () => {
+//       // connection dropped — EventSource auto-reconnects, so just wait
+//     };
 
-    return () => {
-      es.close();
-    };
-  }, []);
+//     return () => {
+//       es.close();
+//     };
+//   }, []);
 
-  return count;
-}
+//   return count;
+// }
 
 interface StatsRowProps {
   /** Fallback / starting waitlist count, shown until the live endpoint responds */
@@ -90,11 +90,11 @@ interface StatsRowProps {
 }
 
 export default function StatsRow({
-  initialWaitlistCount = 0,
+  // initialWaitlistCount = 0,
   className = "",
 }: StatsRowProps) {
   const { value: malaysiaCount, nodeRef: malaysiaStatRef } = useCountUp(863_500);
-  const waitlistCount = useWaitlistCount(initialWaitlistCount);
+  // const waitlistCount = useWaitlistCount(initialWaitlistCount);
 
   return (
     <div className={`w-full max-w-3xl mx-auto ${className}`}>
@@ -105,12 +105,12 @@ export default function StatsRow({
             {malaysiaCount.toLocaleString()}
           </div>
           <p className="mt-1.5 text-[11px] md:text-xs text-white/70 uppercase tracking-wide leading-snug max-w-44 mx-auto">
-            Neurodivergent working adults in Malaysia
+            Neurodivergent working adults in Malaysia*
           </p>
         </div>
 
         {/* Stat 2 — live waitlist count */}
-        <div className="flex-1 py-4 sm:py-0 sm:px-8 text-center">
+        {/* <div className="flex-1 py-4 sm:py-0 sm:px-8 text-center">
           <div className="flex items-center justify-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange/70" />
@@ -123,7 +123,7 @@ export default function StatsRow({
           <p className="mt-1.5 text-[11px] md:text-xs text-white/70 uppercase tracking-wide leading-snug max-w-44 mx-auto">
             People on the waitlist
           </p>
-        </div>
+        </div> */}
 
         {/* Stat 3 — static prevalence figure */}
         <div className="flex-1 py-4 sm:py-0 sm:px-8 text-center">
@@ -131,13 +131,22 @@ export default function StatsRow({
             1 in 20
           </div>
           <p className="mt-1.5 text-[11px] md:text-xs text-white/70 uppercase tracking-wide leading-snug max-w-44 mx-auto">
-            People are Autistic and/or have ADHD*
+            working adults are Autistic and/or have ADHD (WHO)
+          </p>
+        </div>
+
+                <div className="flex-1 py-4 sm:py-0 sm:px-8 text-center">
+          <div className="font-serif text-3xl md:text-4xl text-yellow">
+            200+
+          </div>
+          <p className="mt-1.5 text-[11px] md:text-xs text-white/70 uppercase tracking-wide leading-snug max-w-44 mx-auto">
+            real stories shaped this toolkit
           </p>
         </div>
       </div>
 
       <p className="mt-4 text-center text-[11px] text-white/40">
-        *Estimated combined prevalence of autism and ADHD in adults.
+        *based on WHO global prevalence applied to Malaysia's labour force
       </p>
     </div>
   );

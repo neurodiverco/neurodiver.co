@@ -1,14 +1,14 @@
 // src/components/SignedPartners.tsx
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Partner {
   name: string;
   clinic: string;
   role: string;
   image: string;
-  bio: string;
+  // bio: string;
 }
 
 const partners: Partner[] = [
@@ -17,21 +17,21 @@ const partners: Partner[] = [
     clinic: "Minda Inklusif",
     role: "Clinical Psychologist",
     image: "/images/izzat.jpg",
-    bio: "Izzat empowers individuals through compassionate, evidence-based care, supporting people navigating anxiety, depression, trauma, stress, and neurodivergent experiences. Her clinical insights guide NeuroDiver in creating tools and communities that prioritise understanding, growth, and practical support for individuals on their mental wellbeing journey.",
+    // bio: "Izzat empowers individuals through compassionate, evidence-based care, supporting people navigating anxiety, depression, trauma, stress, and neurodivergent experiences. Her clinical insights guide NeuroDiver in creating tools and communities that prioritise understanding, growth, and practical support for individuals on their mental wellbeing journey.",
   },
   {
     name: "Shaleen",
     clinic: "Own Practice",
     role: "Clinical Psychologist",
     image: "/images/shaleen.jpg",
-    bio: "Shaleen supports individuals in understanding their experiences with greater compassion, especially through challenges around identity, relationships, and emotional wellbeing. Her perspective helps NeuroDiver create a more inclusive community built on safety, acceptance, and genuine human connection..",
+    // bio: "Shaleen supports individuals in understanding their experiences with greater compassion, especially through challenges around identity, relationships, and emotional wellbeing. Her perspective helps NeuroDiver create a more inclusive community built on safety, acceptance, and genuine human connection..",
   },
   {
     name: "Kiran",
     clinic: "Aloe Mind",
     role: "Clinical Psychologist",
-    image: "/images/kiran.jpeg",
-    bio: "Kiran creates affirming spaces for individuals navigating stress, identity, emotional challenges, and life transitions. Her clinical insights guide NeuroDiver in building a community that understands the realities behind productivity struggles — not just the visible behaviours, but the experiences underneath.",
+    image: "/images/kiran.jpeg"
+    // bio: "Kiran creates affirming spaces for individuals navigating stress, identity, emotional challenges, and life transitions. Her clinical insights guide NeuroDiver in building a community that understands the realities behind productivity struggles — not just the visible behaviours, but the experiences underneath.",
   },
 ];
 
@@ -44,12 +44,12 @@ function getOffset(index: number, current: number, length: number) {
 
 export default function SignedPartners() {
   const [current, setCurrent] = useState(0);
-  const [expanded, setExpanded] = useState(false);
+  // const [expanded, setExpanded] = useState(false);
   const length = partners.length;
   const active = partners[current];
 
   const goTo = (i: number) => {
-    setExpanded(false);
+    // setExpanded(false);
     setCurrent(((i % length) + length) % length);
   };
   const next = () => goTo(current + 1);
@@ -96,13 +96,11 @@ export default function SignedPartners() {
             Clinical Expertise
           </p>
           <h2 className="mt-3 font-serif text-3xl leading-tight text-primary md:text-5xl">
-            Backed by clinical psychologists
-            <span className="italic text-primary-light">, on paper.</span>
+            Every strategy in this deck has passed through a clinical psychologist's eyes
+            <span className="italic text-primary-light"> before it reaches you.</span>
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-primary/70">
-            NeuroDiver has formal partnerships with three practicing clinical
-            psychologists who help shape and vet the strategies inside the
-            product.
+            Reviewing and shaping every tool before it ships.
           </p>
         </motion.div>
 
@@ -202,7 +200,7 @@ export default function SignedPartners() {
                 {active.role} · {active.clinic}
               </p>
 
-              <button
+              {/* <button
                 type="button"
                 onClick={() => setExpanded((v) => !v)}
                 aria-expanded={expanded}
@@ -215,9 +213,9 @@ export default function SignedPartners() {
                 >
                   <ChevronDown className="h-4 w-4" />
                 </motion.span>
-              </button>
+              </button> */}
 
-              <AnimatePresence initial={false}>
+              {/* <AnimatePresence initial={false}>
                 {expanded && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
@@ -231,7 +229,7 @@ export default function SignedPartners() {
                     </p>
                   </motion.div>
                 )}
-              </AnimatePresence>
+              </AnimatePresence> */}
             </motion.div>
           </AnimatePresence>
         </div>

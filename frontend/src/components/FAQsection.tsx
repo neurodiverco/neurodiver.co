@@ -54,6 +54,14 @@ answer: "Yes. NeuroDiver is designed for both individuals and organisations. Whe
 {
   question: "Is NeuroDiver available now?",
   answer: "NeuroDiver is currently in pilot testing. By joining our early access list, you'll be among the first to try new features and help shape how the platform grows.",
+},
+{
+  question: "I haven't been diagnosed — can I still use this?",
+  answer: "Yes. Most of the people we built this for haven't been.",
+},
+{
+  question: "Is this a replacement for therapy or my psychiatrist?",
+  answer: "No — we built it because a diagnosis or a psychiatrist appointment alone was never enough on its own.",
 }
 ];
 

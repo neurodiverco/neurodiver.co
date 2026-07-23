@@ -107,7 +107,7 @@ export default function WaitlistForm({
           disabled={submitted || submitting}
           className={`px-5 py-2.5 rounded-lg bg-orange text-white font-semibold text-sm transition-colors hover:bg-orange/90 whitespace-nowrap disabled:opacity-50 ${buttonClassName}`}
         >
-          {submitting ? "Joining..." : submitted ? "Joined" : "Join waitlist"}
+          {submitting ? "Joining..." : submitted ? "Joined" : "Join our waitlist"}
         </ConfettiButton>
       </form>
     </div>

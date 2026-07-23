@@ -2,15 +2,18 @@
 import WaitlistForm from "../components/WaitlistForm";
 import StatsRow from "../components/StatsRow";
 import Grainient from "../components/Grainient";
-import Testimonials from "../components/Testimonials";
-import { Link } from "react-router-dom";
+// import Testimonials from "../components/Testimonials";
+// import { Link } from "react-router-dom";
 import { motion } from "motion/react";
-import { Award, MessagesSquare, Users, HeartHandshake, LineChart, Smile } from "lucide-react";
+// import { Award, MessagesSquare, Users, HeartHandshake, LineChart, Smile } from "lucide-react";
 import SlackIntro from "@/components/ui/slack-intro";
 import SignedPartners from "@/components/SignedPartners";
 import SDGGoals from "@/components/SDGgoals";
 import FAQSection from "@/components/FAQsection";
 import { useSEO } from "@/hooks/useSEO";
+import  WhatWeHeard from "@/components/WhatWeHeard";
+import WhichOneAreYou from "@/components/WhichOneAreYou";
+import WhyWeBuiltThis from "@/components/WhyWeBuiltThis";
 
 export default function Home() {
   useSEO({
@@ -50,15 +53,13 @@ export default function Home() {
         />
         <div className="relative z-10 max-w-3xl mx-auto text-center space-y-5 sm:space-y-6">
           <p className="inline-block px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-yellow backdrop-blur-sm border border-[#655733] text-[#655733] text-xs sm:text-sm font-semibold uppercase tracking-widest">
-            Productivity toolkit
+            For late-diagnosed & undiagnosed neurodivergent adults
           </p>
           <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white leading-tight [text-shadow:0_2px_12px_rgba(0,0,0,0.5),0_4px_24px_rgba(0,0,0,0.3)]">
             Work with your brain, <span className="text-yellow italic">not against it.</span>
           </h1>
           <p className="text-white/90 text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed [text-shadow:0_1px_8px_rgba(0,0,0,0.45)]">
-            A productivity toolkit designed for neurodivergent adults. Track your
-            energy, discover personalized strategies, and build sustainable ways
-            of working.
+          Not knowing what you need. Pretending till burnout hits. Work as a daily crisis. If any of that's you, you are not the problem.
           </p>
           <div className="pt-2 sm:pt-4">
             <WaitlistForm />
@@ -69,7 +70,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="px-6 py-16 md:py-24 bg-cream">
+      <WhatWeHeard />
+      <WhichOneAreYou />
+      <WhyWeBuiltThis />
+
+      {/* <section className="px-6 py-16 md:py-24 bg-cream">
         <div className="max-w-6xl mx-auto">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -160,7 +165,7 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       <section className="px-6 py-16 md:py-24 bg-primary text-white overflow-hidden">
         <div className="max-w-6xl mx-auto">
@@ -185,19 +190,19 @@ export default function Home() {
           <div className="grid gap-6 lg:grid-cols-3">
             {[
               {
-                title: "Understand your patterns",
+                title: "Energy Tracker",
                 image: "/images/patterns.jpg",
-                text: "See when your energy rises, drops, or starts to fray, so you can plan with a bit more clarity.",
+                text: "\"I don't realise I'm burning out until it's too late.\" A 90-second daily check-in. Catches the pattern before the crash does.",
               },
               {
-                title: "Find strategies that fit",
+                title: "Strategy Card Deck",
                 image: "/images/strategies.jpg",
-                text: "Use practical support that meets the task in front of you, instead of trying to force a one-size-fits-all approach.",
+                text: " \"I can't explain what I need at work.\" Real, situation-based strategies from other neurodivergent adults — reviewed by our Clinical Psychologist Advisory Board. Not generic advice. Someone else's exact fix for your exact moment.",
               },
               {
-                title: "Work alongside others",
+                title: "Co-Working Sessions",
                 image: "/images/work.jpg",
-                text: "Build momentum with body doubling and shared focus sessions that make starting and staying on task feel lighter.",
+                text: " \"I can't start or finish tasks when I'm alone.\" Structured body doubling — state your task, work alongside others, report back. Cameras optional. Built for the days your brain needs a witness, not a lecture.",
               },
             ].map((item, index) => (
               <motion.article
@@ -238,7 +243,7 @@ export default function Home() {
 
       <SignedPartners />
 
-      <section className="px-6 py-16 md:py-24 bg-cream">
+      {/* <section className="px-6 py-16 md:py-24 bg-cream">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -319,11 +324,11 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       <SlackIntro />
 
-      <Testimonials />
+      {/* <Testimonials /> */}
 
       <FAQSection />
 
@@ -365,15 +370,15 @@ export default function Home() {
                 text-primary
               "
             >
-              Join the Waitlist
+              Be part of building this
             </span>
       
             <h2 className="font-serif text-3xl leading-tight text-orange md:text-5xl">
-              Be first to try it.
+              Join now and you help decide what NeuroDiver becomes.
             </h2>
       
             <p className="mt-5 text-lg leading-relaxed text-orange/75">
-              Join the waitlist and help shape the tools as they're built.
+              The strategies, the tracker, and the sessions are still being shaped by the people using them. 
             </p>
       
             <div className="mt-10 flex justify-center">
