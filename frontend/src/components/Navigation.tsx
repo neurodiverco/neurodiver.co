@@ -6,7 +6,7 @@ import { Menu, X } from "lucide-react";
 const navLinks = [
   { to: "/", label: "Home", end: true },
   { to: "/individuals", label: "For Individuals", end: false },
-  { to: "/organisations", label: "For Organisations", end: false },
+  { to: "/organisations", label: "For Organisations (Coming Soon)", end: false },
   { to: "/blog", label: "Blog", end: false },
     { to: "/contact", label: "Contact", end: false },
     { to: "/about", label: "About", end: false },
