@@ -1,5 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import * as express from 'express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -15,7 +18,7 @@ async function bootstrap() {
   );
 
   // CORS — FRONTEND_URL can be a comma-separated list of allowed origins
-  const rawOrigins = process.env.FRONTEND_URL ?? 'https://neurodiver.co';
+  const rawOrigins = process.env.FRONTEND_URL ?? 'http://localhost:5173';
   const allowedOrigins = rawOrigins.split(',').map((o) => o.trim());
 
   app.enableCors({
@@ -23,7 +26,6 @@ async function bootstrap() {
       origin: string | undefined,
       callback: (err: Error | null, allow?: boolean) => void,
     ) => {
-      // Allow requests with no origin (curl, Postman, server-to-server)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -35,13 +37,35 @@ async function bootstrap() {
     credentials: true,
   });
 
+  const candidates = [
+    resolve(process.cwd(), 'frontend', 'dist'),
+    resolve(process.cwd(), '..', 'frontend', 'dist'),
+  ];
+  const frontendDist = candidates.find((dir) => existsSync(dir)) ?? candidates[0];
+
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.use(express.static(frontendDist));
+  expressApp.get(/^(?!\/api).*/, (req, res, next) => {
+    if (req.originalUrl.startsWith('/api')) {
+      next();
+      return;
+    }
+
+    if (req.originalUrl.includes('.')) {
+      next();
+      return;
+    }
+
+    res.sendFile(resolve(frontendDist, 'index.html'));
+  });
+
   // All routes are prefixed with /api
   app.setGlobalPrefix('api');
 
-  await app.listen(process.env.PORT ?? 3000);
-  console.log(
-    `Backend running on http://localhost:${process.env.PORT ?? 3000}/api`,
-  );
+  const port = Number(process.env.PORT ?? 3000);
+  await app.listen(port);
+  console.log(`App running on http://localhost:${port}`);
+  console.log(`API available at http://localhost:${port}/api`);
 }
 
 void bootstrap();

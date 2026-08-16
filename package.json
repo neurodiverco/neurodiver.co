@@ -1,6 +1,12 @@
 {
-  "dependencies": {
-    "gsap": "^3.15.0",
-    "lucide-react": "^1.23.0"
+  "name": "neurodiver-landing",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm --prefix app run dev",
+    "build": "npm --prefix app run build",
+    "start": "npm --prefix app run start",
+    "start:prod": "npm --prefix app run start:prod",
+    "install:all": "npm --prefix app install"
   }
 }
