@@ -1,6 +1,10 @@
 // src/pages/PrivacyPolicy.tsx
+import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { Mail, MapPin } from "lucide-react";
+import PageHeader from "@/components/marketing/PageHeader";
+import FAQSection from "@/components/FAQsection";
+import { FinalCtaBand } from "@/components/marketing/Section";
 
 interface Section {
   id: string;
@@ -274,21 +278,20 @@ const sections: Section[] = [
 
 export default function PrivacyPolicy() {
   return (
-    <section className="bg-cream px-6 py-24 md:py-32">
+    <>
+      <PageHeader
+        eyebrow="Legal"
+        title="Privacy Policy"
+        compact
+      />
+    <section className="bg-paper px-6 py-12 md:py-16">
       <div className="mx-auto max-w-3xl">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <p className="text-sm font-semibold uppercase tracking-widest text-orange">
-            Legal
-          </p>
-          <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-5xl">
-            Privacy Policy
-          </h1>
-          <p className="mt-5 text-lg leading-relaxed text-primary/70">
+          <p className="text-lg leading-relaxed text-muted">
             Welcome to Neurodiver! In this Privacy Policy, "Neurodiver", "we", "our" or
             "us" refers to NEURODIVER PLT (Company No.: 202604001004 (LLP0046235-LGN)), a
             private company limited by shares incorporated under the laws of Malaysia and
@@ -373,5 +376,20 @@ export default function PrivacyPolicy() {
         </motion.div>
       </div>
     </section>
+
+      <FAQSection />
+
+      <FinalCtaBand
+        title="Questions about your data?"
+        body="Contact us anytime. To use NeuroDiver support, open the app and sign in when you are ready."
+      >
+        <Link
+          to="/contact"
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-brand px-6 py-3 text-sm font-semibold text-paper transition hover:brightness-95 sm:w-auto"
+        >
+          Contact us
+        </Link>
+      </FinalCtaBand>
+    </>
   );
 }

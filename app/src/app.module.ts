@@ -9,7 +9,10 @@ import { WaitlistModule } from './waitlist/waitlist.module';
 @Module({
   imports: [
     // Load .env variables globally so every module can inject ConfigService
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env.local', '.env'],
+    }),
     FirebaseModule,
     ContactModule,
     WaitlistModule,

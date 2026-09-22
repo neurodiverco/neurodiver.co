@@ -1,14 +1,28 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { ExpressAdapter } from '@nestjs/platform-express';
 import { existsSync } from 'node:fs';
+import { createServer as createHttpServer } from 'node:http';
 import { resolve } from 'node:path';
-import * as express from 'express';
+import type { NextFunction, Request, Response } from 'express';
+import express from 'express';
+import type { ViteDevServer } from 'vite';
 import { AppModule } from './app.module';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+function isApiRequest(url: string | undefined): boolean {
+  const path = url?.split('?')[0] ?? '/';
+  return path === '/api' || path.startsWith('/api/');
+}
 
-  // Global validation using class-validator decorators
+async function bootstrap() {
+  const expressApp = express();
+  const httpServer = createHttpServer(expressApp);
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    new ExpressAdapter(expressApp),
+  );
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -17,8 +31,8 @@ async function bootstrap() {
     }),
   );
 
-  // CORS — FRONTEND_URL can be a comma-separated list of allowed origins
-  const rawOrigins = process.env.FRONTEND_URL ?? 'http://localhost:5173';
+  const rawOrigins =
+    process.env.FRONTEND_URL ?? 'http://localhost:3000,http://localhost:5173';
   const allowedOrigins = rawOrigins.split(',').map((o) => o.trim());
 
   app.enableCors({
@@ -37,33 +51,66 @@ async function bootstrap() {
     credentials: true,
   });
 
-  const candidates = [
-    resolve(process.cwd(), 'frontend', 'dist'),
-    resolve(process.cwd(), '..', 'frontend', 'dist'),
-  ];
-  const frontendDist = candidates.find((dir) => existsSync(dir)) ?? candidates[0];
-
-  const expressApp = app.getHttpAdapter().getInstance();
-  expressApp.use(express.static(frontendDist));
-  expressApp.get(/^(?!\/api).*/, (req, res, next) => {
-    if (req.originalUrl.startsWith('/api')) {
-      next();
-      return;
-    }
-
-    if (req.originalUrl.includes('.')) {
-      next();
-      return;
-    }
-
-    res.sendFile(resolve(frontendDist, 'index.html'));
-  });
-
-  // All routes are prefixed with /api
   app.setGlobalPrefix('api');
 
+  const frontendRoot = resolve(process.cwd(), 'frontend');
+  const frontendDist = resolve(frontendRoot, 'dist');
+  const indexHtml = resolve(frontendDist, 'index.html');
+  const useVite = process.env.NODE_ENV !== 'production';
+
+  // Non-API traffic must be handled before Nest's router (otherwise GET / → JSON 404).
+  if (useVite) {
+    process.env.VITE_MIDDLEWARE_MODE = 'true';
+    const { createServer } = await import('vite');
+    const vite: ViteDevServer = await createServer({
+      root: frontendRoot,
+      configFile: resolve(frontendRoot, 'vite.config.ts'),
+      server: {
+        middlewareMode: true,
+        hmr: { server: httpServer },
+      },
+      appType: 'spa',
+    });
+
+    expressApp.use((req: Request, res: Response, next: NextFunction) => {
+      if (isApiRequest(req.url)) {
+        next();
+        return;
+      }
+      vite.middlewares(req, res, next);
+    });
+    console.log('Dev mode: Vite middleware on the same port as the API');
+  } else if (existsSync(indexHtml)) {
+    const staticHandler = express.static(frontendDist);
+    expressApp.use((req: Request, res: Response, next: NextFunction) => {
+      if (isApiRequest(req.url)) {
+        next();
+        return;
+      }
+      staticHandler(req, res, (err) => {
+        if (err) {
+          next(err);
+          return;
+        }
+        if (req.url?.includes('.')) {
+          next();
+          return;
+        }
+        res.sendFile(indexHtml);
+      });
+    });
+  } else {
+    console.warn(
+      'No frontend build at app/frontend/dist — API only until you run npm run build.',
+    );
+  }
+
+  await app.init();
+
   const port = Number(process.env.PORT ?? 3000);
-  await app.listen(port);
+  await new Promise<void>((resolveListen) => {
+    httpServer.listen(port, () => resolveListen());
+  });
   console.log(`App running on http://localhost:${port}`);
   console.log(`API available at http://localhost:${port}/api`);
 }

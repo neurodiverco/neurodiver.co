@@ -1,92 +1,115 @@
-
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import BookSessionButton from "./marketing/BookSessionButton";
 
 const navLinks = [
-  { to: "/", label: "Home", end: true },
-  { to: "/individuals", label: "For Individuals", end: false },
-  { to: "/organisations", label: "For Organisations (Coming Soon)", end: false },
-  { to: "/blog", label: "Blog", end: false },
-    { to: "/contact", label: "Contact", end: false },
-    { to: "/about", label: "About", end: false },
-
+  { to: "/body-doubling", label: "Body Doubling", tone: "muted" as const },
+  { to: "/tools", label: "Tools", tone: "primary" as const },
+  { to: "/for-organisations", label: "For Organisations", tone: "muted" as const },
+  { to: "/about", label: "About", tone: "primary" as const },
 ];
+
+function linkClass(isActive: boolean, tone: "muted" | "primary") {
+  const base =
+    "text-lg font-bold tracking-tight transition-colors xl:text-xl";
+  if (isActive) return `${base} text-brand`;
+  return tone === "primary"
+    ? `${base} text-primary hover:text-brand`
+    : `${base} text-muted hover:text-primary`;
+}
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 pt-4 md:pt-8">
-      <nav className="max-w-7xl mx-auto flex items-center justify-between rounded-full bg-white/70 backdrop-blur-xl shadow-lg border border-white/30 px-6 md:px-8 py-4">
-        {/* Logo */}
-        <NavLink to="/" className="flex items-center">
-  <img
-    src="/images/logowords.png"
-    alt="NeuroDiver"
-    className="h-10 w-auto"
-  />
-</NavLink>
+    <header className="sticky top-0 z-50 bg-paper">
+      <nav
+        className="mx-auto flex max-w-7xl items-center gap-3 px-5 py-4 md:px-8 md:py-5 lg:gap-6"
+        aria-label="Main"
+      >
+        <Link to="/" className="flex min-w-0 shrink-0 items-center">
+          <img
+            src="/images/logowords.png"
+            alt="NeuroDiver"
+            className="h-9 w-auto md:h-10 lg:h-11"
+          />
+        </Link>
 
-        {/* Desktop Navigation */}
-        <ul className="hidden md:flex items-center gap-10">
-          {navLinks.map(({ to, label, end }) => (
+        <ul className="ml-auto hidden items-center gap-6 lg:flex xl:gap-10">
+          {navLinks.map(({ to, label, tone }) => (
             <li key={to}>
-              <NavLink
-                to={to}
-                end={end}
-                className={({ isActive }) =>
-                  `text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? "text-orange"
-                      : "text-primary/70 hover:text-primary"
-                  }`
-                }
-              >
+              <NavLink to={to} className={({ isActive }) => linkClass(isActive, tone)}>
                 {label}
               </NavLink>
             </li>
           ))}
         </ul>
 
-        {/* Mobile Button */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden rounded-lg p-2 hover:bg-black/5 transition"
-        >
-          {isMenuOpen ? (
-            <X className="h-6 w-6 text-primary" />
-          ) : (
-            <Menu className="h-6 w-6 text-primary" />
-          )}
-        </button>
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3 lg:ml-4">
+          <Link
+            to="/contact"
+            className="hidden min-h-11 items-center rounded-full border-2 border-brand px-5 py-2.5 text-base font-bold text-brand transition hover:bg-soft lg:inline-flex xl:px-7 xl:text-lg"
+          >
+            Contact
+          </Link>
+
+          <BookSessionButton
+            variant="secondary"
+            className="min-h-10 px-3.5 py-2 text-xs font-bold sm:min-h-11 sm:px-5 sm:py-2.5 sm:text-sm lg:px-6 lg:text-base xl:px-8 xl:text-lg"
+          >
+            <span className="sm:hidden">Book a session</span>
+            <span className="hidden sm:inline">Book a session</span>
+          </BookSessionButton>
+
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="-mr-1 inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-lg hover:bg-soft lg:hidden"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-main-nav"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMenuOpen ? (
+              <X className="h-7 w-7 text-primary" aria-hidden />
+            ) : (
+              <Menu className="h-7 w-7 text-primary" aria-hidden />
+            )}
+          </button>
+        </div>
       </nav>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden mt-3 mx-auto max-w-7xl rounded-3xl bg-white/95 backdrop-blur-xl shadow-xl border border-white/30 overflow-hidden">
-          <ul className="flex flex-col py-2">
-            {navLinks.map(({ to, label, end }) => (
+      {isMenuOpen ? (
+        <div
+          id="mobile-main-nav"
+          className="border-t border-line bg-paper lg:hidden"
+        >
+          <ul className="mx-auto max-w-7xl px-5 py-4">
+            {navLinks.map(({ to, label, tone }) => (
               <li key={to}>
                 <NavLink
                   to={to}
-                  end={end}
                   onClick={() => setIsMenuOpen(false)}
                   className={({ isActive }) =>
-                    `block px-6 py-4 text-sm font-medium transition ${
-                      isActive
-                        ? "text-orange bg-orange/5"
-                        : "text-primary/70 hover:bg-gray-50 hover:text-primary"
-                    }`
+                    `block py-3 ${linkClass(isActive, tone)}`
                   }
                 >
                   {label}
                 </NavLink>
               </li>
             ))}
+            <li>
+              <NavLink
+                to="/contact"
+                onClick={() => setIsMenuOpen(false)}
+                className="block py-3 text-lg font-bold text-brand xl:text-xl"
+              >
+                Contact
+              </NavLink>
+            </li>
           </ul>
         </div>
-      )}
+      ) : null}
     </header>
   );
 }

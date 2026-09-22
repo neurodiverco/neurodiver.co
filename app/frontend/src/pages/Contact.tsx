@@ -1,6 +1,12 @@
 // src/pages/Contact.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import { useSearchParams } from "react-router-dom";
+import { CONTACT_EMAIL } from "@/constants/site";
+import PageHeader from "@/components/marketing/PageHeader";
+import BookSessionButton from "@/components/marketing/BookSessionButton";
+import { FinalCtaBand } from "@/components/marketing/Section";
+import FAQSection from "@/components/FAQsection";
 import { AnimatePresence, motion } from "motion/react";
 import { CheckCircle2 } from "lucide-react";
 import { useSEO } from "../hooks/useSEO";
@@ -58,12 +64,19 @@ const inputClass =
 
 export default function Contact() {
   useSEO({
-    title: "Contact — Talk to Us About Early Access",
+    title: "Contact NeuroDiver",
     description:
-      "Get in touch with the NeuroDiver team. Whether you're an individual curious about early access or an organisation wanting to pilot the product, we'd love to hear from you.",
+      "For partnerships, pilots, press or general questions, email hello@neurodiver.co.",
     path: "/contact",
   });
+  const [searchParams] = useSearchParams();
   const [audience, setAudience] = useState<AudienceType>("individual");
+
+  useEffect(() => {
+    if (searchParams.get("audience") === "organisation") {
+      setAudience("organisation");
+    }
+  }, [searchParams]);
   const [individualData, setIndividualData] = useState<IndividualForm>(initialIndividual);
   const [organisationData, setOrganisationData] = useState<OrganisationForm>(initialOrganisation);
   const [submitting, setSubmitting] = useState(false);
@@ -123,13 +136,18 @@ export default function Contact() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(
-          (data as { message?: string }).message ?? "Submission failed. Please try again."
+          (data as { message?: string }).message ??
+            `We could not send your message. Please try again or email ${CONTACT_EMAIL}.`,
         );
       }
 
       setSubmitted(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : `We could not send your message. Please try again or email ${CONTACT_EMAIL}.`,
+      );
     }
 
     setSubmitting(false);
@@ -143,22 +161,24 @@ export default function Contact() {
   };
 
   return (
-    <section className="flex min-h-svh items-center justify-center bg-cream px-6 py-16">
-      <div className="mx-auto w-full max-w-2xl">
-        {/* Header */}
-        <div className="mb-10 space-y-5 text-center md:mb-12">
-          <p className="text-sm font-semibold uppercase tracking-widest  pt-20 text-orange">
-            Contact
-          </p>
-          <h1 className="font-serif text-4xl leading-tight text-primary md:text-6xl">
-            Talk to us about the product, a team, or early access.
-          </h1>
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-primary/70 md:text-xl">
-            Reach out if you want to learn more, share feedback, or explore what
-            NeuroDiver could look like for your context.
-          </p>
-        </div>
+    <>
+      <PageHeader
+        eyebrow="Contact"
+        title="Get in touch."
+        description={
+          <>
+            For partnerships, pilots, press or general questions, email{" "}
+            <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-lime underline-offset-2 hover:underline">
+              {CONTACT_EMAIL}
+            </a>
+            .
+          </>
+        }
+        compact
+      />
 
+    <section className="flex min-h-0 items-center justify-center bg-soft px-6 py-16">
+      <div className="mx-auto w-full max-w-2xl">
         {/* Card */}
         <div className="rounded-4xl border border-primary/10 bg-white p-6 shadow-[0_25px_60px_rgba(45,90,61,0.1)] md:p-10">
           <AnimatePresence mode="wait">
@@ -175,7 +195,7 @@ export default function Contact() {
                   <CheckCircle2 className="h-7 w-7" />
                 </span>
                 <h2 className="mt-5 font-serif text-2xl text-primary md:text-3xl">
-                  Thank you — we will be in touch soon.
+                  Thanks for getting in touch. We will reply by email.
                 </h2>
                 <button
                   type="button"
@@ -455,5 +475,18 @@ export default function Contact() {
         </div>
       </div>
     </section>
+
+      <FAQSection />
+
+      <FinalCtaBand
+        title="Prefer to start in the app?"
+        body="Book a body doubling session or explore check-ins and strategies when you are ready."
+        footnote="You can still use the form above for partnerships, pilots and press."
+      >
+        <BookSessionButton className="w-full sm:w-auto">
+          Open the NeuroDiver app
+        </BookSessionButton>
+      </FinalCtaBand>
+    </>
   );
 }

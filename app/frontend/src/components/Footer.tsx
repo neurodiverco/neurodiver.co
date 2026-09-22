@@ -1,108 +1,53 @@
-import {
-
-  Mail,
-} from "lucide-react";
+import { Link } from "react-router-dom";
+import { CONTACT_EMAIL } from "@/constants/site";
 
 const footerLinks = [
-  { label: "Home", href: "/" },
-  { label: "For Individuals", href: "/individuals" },
-  { label: "For Organisations", href: "/organisations" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-];
-
-const socialLinks = [
-  // {
-  //   name: "Instagram",
-  //   href: "#",
-  //   icon: <Instagram className="h-5 w-5" />,
-  // },
-  // {
-  //   name: "LinkedIn",
-  //   href: "#",
-  //   icon: <Linkedin className="h-5 w-5" />,
-  // },
-  {
-    name: "Email",
-    href: "#",
-    icon: <Mail className="h-5 w-5" />,
-  },
+  { label: "Body Doubling", to: "/body-doubling" },
+  { label: "Tools", to: "/tools" },
+  { label: "For Organisations", to: "/for-organisations" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-primary text-white">
-      {/* Warm yellow bokeh */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-32 bottom-0 h-96 w-96 rounded-full bg-yellow/20 blur-3xl" />
-        <div className="absolute -right-32 top-0 h-[450px] w-[450px] rounded-full bg-yellow/25 blur-3xl" />
-      </div>
-
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-14 md:px-8">
-        {/* Logo / tagline */}
-        <div className="mb-8 flex flex-col items-center text-center">
-          <h2 className="text-3xl font-semibold tracking-tight">
-            Neuro
-            <span className="font-serif italic font-normal text-yellow">
-              Diver
-            </span>
-          </h2>
-
-          <p className="mt-3 max-w-md font-serif text-xl italic text-yellow/90">
-            Tools for minds that work differently.
-          </p>
-
-          <p className="mt-2 text-sm text-white/60">
-            Built with understanding, designed for neurodivergent minds.
-          </p>
-        </div>
-
-
-        {/* Navigation */}
-        <nav className="mb-8">
+    <footer className="border-t border-white/10 bg-primary-dark text-paper">
+      <div className="mx-auto max-w-6xl px-6 py-12 md:px-8">
+        <nav aria-label="Footer">
           <ul className="flex flex-wrap justify-center gap-x-8 gap-y-3">
             {footerLinks.map((link) => (
-              <li key={link.label}>
-                <a
-                  href={link.href}
-                  className="text-sm text-white/70 transition-all duration-300 hover:text-yellow"
+              <li key={link.to}>
+                <Link
+                  to={link.to}
+                  className="text-sm font-semibold text-paper/75 transition-colors hover:text-lime"
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
+            <li>
+              <Link
+                to="/privacy-policy"
+                className="text-sm font-semibold text-paper/75 transition-colors hover:text-lime"
+              >
+                Privacy Policy
+              </Link>
+            </li>
           </ul>
         </nav>
 
-
-        {/* Social icons */}
-        <div className="mb-8 flex justify-center gap-5">
-          {socialLinks.map((social) => (
-            <a
-              key={social.name}
-              href={social.href}
-              aria-label={social.name}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white/70 transition-all duration-300 hover:-translate-y-1 hover:border-yellow hover:text-yellow"
-            >
-              {social.icon}
-            </a>
-          ))}
-        </div>
-
-
-        {/* Bottom */}
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-white/20 pt-6 text-sm text-white/50 sm:flex-row">
-          <p>
-            © {new Date().getFullYear()} NeuroDiver PLT. All rights reserved.
-          </p>
-
+        <p className="mt-6 text-center text-sm text-paper/70">
           <a
-            href="/privacy-policy"
-            className="transition-colors hover:text-white"
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="font-semibold text-paper/85 transition-colors hover:text-lime"
           >
-            Privacy Policy
+            {CONTACT_EMAIL}
           </a>
-        </div>
+        </p>
+
+        <p className="mt-6 text-center text-sm text-paper/55">
+          © {new Date().getFullYear()} NeuroDiver PLT
+        </p>
       </div>
     </footer>
   );

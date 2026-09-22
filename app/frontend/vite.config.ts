@@ -10,15 +10,18 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
   server: {
-    proxy: {
-      "/api": {
-        target: "http://localhost:3000",
-        changeOrigin: true,
-      },
-    },
+    // When Nest mounts Vite (VITE_MIDDLEWARE_MODE), /api is handled by Nest on the same port.
+    proxy: process.env.VITE_MIDDLEWARE_MODE
+      ? undefined
+      : {
+          "/api": {
+            target: "http://localhost:3000",
+            changeOrigin: true,
+          },
+        },
   },
 });

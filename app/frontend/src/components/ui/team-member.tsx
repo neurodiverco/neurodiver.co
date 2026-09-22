@@ -30,12 +30,6 @@ const teamMembers: TeamMember[] = [
     src:
       "images/ridhwan.jpg",
   },
-  {
-    name: "Kaiden",
-    role: "Tech Lead",
-    src:
-      "images/kaiden.jpg",
-  },
 ];
 
 
@@ -144,8 +138,30 @@ const TeamCard = ({ member }: { member: TeamMember }) => {
 
 
 
-export default function TeamMemberSection(){
+function TeamGrid() {
+  return (
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6 lg:grid-cols-5">
+      {teamMembers.map((member, index) => (
+        <div
+          key={member.name}
+          className="animate-reveal-up lg:col-span-1"
+          style={{ animationDelay: `${index * 120}ms` }}
+        >
+          <TeamCard member={member} />
+        </div>
+      ))}
+    </div>
+  );
+}
 
+export default function TeamMemberSection({
+  showIntro = true,
+}: {
+  showIntro?: boolean;
+}) {
+  if (!showIntro) {
+    return <TeamGrid />;
+  }
 
 return (
 
@@ -270,40 +286,7 @@ to create solutions that empower people and communities.
 
 
 
-{/* Team Grid */}
-<div
-  className="
-  grid
-  grid-cols-6
-  lg:grid-cols-5
-  gap-4
-  md:gap-6
-  "
->
-  {teamMembers.map((member, index) => (
-    <div
-      key={member.name}
-      className={`
-      animate-reveal-up
-
-      /* Mobile & Tablet: 3 cards on first row */
-      col-span-2
-
-      /* Desktop: 5 cards in one row */
-      lg:col-span-1
-
-      /* Center the bottom two cards */
-      ${index === 3 ? "col-start-2 lg:col-start-auto" : ""}
-      ${index === 4 ? "col-start-4 lg:col-start-auto" : ""}
-      `}
-      style={{
-        animationDelay: `${index * 120}ms`,
-      }}
-    >
-      <TeamCard member={member} />
-    </div>
-  ))}
-</div>
+<TeamGrid />
 </div>
 
 

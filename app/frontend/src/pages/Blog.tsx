@@ -5,6 +5,10 @@ import { motion } from "motion/react";
 import { Search, Clock, ArrowUpRight } from "lucide-react";
 import { categories, posts } from "../data/blogPosts";
 import { useSEO } from "@/hooks/useSEO";
+import PageHeader from "@/components/marketing/PageHeader";
+import BookSessionButton from "@/components/marketing/BookSessionButton";
+import { FinalCtaBand } from "@/components/marketing/Section";
+import FAQSection from "@/components/FAQsection";
 
 interface BlogPost {
   slug: string;
@@ -178,21 +182,14 @@ export default function Blog() {
   const showFeatured = activeCategory === "All" && query.trim() === "" && featured;
 
   return (
-    <main className="bg-cream px-6 py-24 md:py-28">
-      <div className="mx-auto max-w-6xl">
-        {/* Header */}
-        <header className="mx-auto mb-12 mt-8 max-w-2xl text-center md:mb-16">
-          <p className="text-sm font-semibold uppercase tracking-widest text-orange">
-            The NeuroDiver Blog
-          </p>
-          <h1 className="mt-3 font-serif text-4xl leading-tight text-primary md:text-6xl">
-            Insights for minds that work differently.
-          </h1>
-          <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-primary/70">
-            Practical, evidence-informed articles on ADHD, executive dysfunction,
-            neurodiversity at work, and building a working life that actually fits.
-          </p>
-        </header>
+    <main className="bg-soft">
+      <PageHeader
+        eyebrow="The NeuroDiver blog"
+        title="Insights for minds that work differently."
+        description="Practical articles on ADHD, executive dysfunction, neurodiversity at work, and sustainable ways of working."
+        compact
+      />
+      <div className="mx-auto max-w-6xl px-6 py-12 md:py-16">
 
         {/* Search */}
         <div className="mx-auto mb-6 max-w-md">
@@ -255,6 +252,17 @@ export default function Blog() {
           </motion.div>
         )}
       </div>
+
+      <FAQSection />
+
+      <FinalCtaBand
+        title="Support beyond the article."
+        body="When reading turns into doing, body doubling and the rest of the toolkit are in the NeuroDiver app."
+      >
+        <BookSessionButton className="w-full sm:w-auto">
+          Book a body doubling session
+        </BookSessionButton>
+      </FinalCtaBand>
     </main>
   );
 }

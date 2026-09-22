@@ -1,9 +1,13 @@
 // src/pages/BlogPost.tsx
 import { Link, Navigate, useParams } from "react-router-dom";
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowUpRight, Clock } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { getPostBySlug, getRelatedPosts } from "../data/blogPosts";
 import { useSEO } from "@/hooks/useSEO";
+import PageHeader from "@/components/marketing/PageHeader";
+import BookSessionButton from "@/components/marketing/BookSessionButton";
+import { FinalCtaBand } from "@/components/marketing/Section";
+import FAQSection from "@/components/FAQsection";
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -78,46 +82,30 @@ export default function BlogPost() {
   const related = getRelatedPosts(post);
 
   return (
-    <main className="bg-cream">
-      {/* Hero */}
-      <header className="relative overflow-visible">
-        <div className="relative aspect-video max-h-[480px] w-full overflow-hidden md:aspect-21/9">
-          <img src={post.image} alt={post.title} className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-linear-to-t from-primary-dark via-primary-dark/40 to-transparent" />
+    <main className="bg-soft">
+      <PageHeader
+        eyebrow={post.category}
+        title={post.title}
+        description={post.excerpt}
+        compact
+      >
+        <Link
+          to="/blog"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-paper/80 transition hover:text-paper"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to blog
+        </Link>
+        <span className="text-sm text-paper/65">
+          {formatDate(post.date)} · {post.readTime}
+        </span>
+      </PageHeader>
+
+      <div className="mx-auto max-w-3xl px-6 pb-4">
+        <div className="overflow-hidden rounded-[20px] border border-line shadow-md">
+          <img src={post.image} alt="" className="aspect-video w-full object-cover" />
         </div>
-
-<div className="relative z-20 mx-auto -mt-20 max-w-3xl px-6 pb-4 md:-mt-28">          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="rounded-4xl border border-primary/10 bg-white p-6 shadow-[0_25px_60px_rgba(45,90,61,0.15)] md:p-10"
-          >
-            <Link
-              to="/blog"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary/60 transition-colors hover:text-primary"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to blog
-            </Link>
-
-            <span className="mt-4 flex w-fit items-center rounded-full bg-yellow/50 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary">
-  {post.category}
-</span>
-
-            <h1 className="mt-4 font-serif text-3xl leading-tight text-primary md:text-5xl">
-              {post.title}
-            </h1>
-
-            <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-primary/50">
-              <span>{formatDate(post.date)}</span>
-              <span className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                {post.readTime}
-              </span>
-            </div>
-          </motion.div>
-        </div>
-      </header>
+      </div>
 
       {/* Article body */}
       <article className="px-6 pb-20 pt-8 md:pb-28 md:pt-12">
@@ -211,6 +199,16 @@ export default function BlogPost() {
         </section>
       )}
 
+      <FAQSection />
+
+      <FinalCtaBand
+        title="Try support that fits your brain."
+        body="Book a body doubling session or explore check-ins and strategies in the NeuroDiver app."
+      >
+        <BookSessionButton className="w-full sm:w-auto">
+          Book a body doubling session
+        </BookSessionButton>
+      </FinalCtaBand>
     </main>
   );
 }

@@ -1,256 +1,232 @@
-// src/pages/AboutUs.tsx
-import { useRef } from "react";
-import { motion, useScroll } from "motion/react";
-import { Check, Sparkles, Heart, ShieldCheck, Users } from "lucide-react";
-import TeamMemberSection from "@/components/ui/team-member";
+import type { LucideIcon } from "lucide-react";
+import { Ear, HeartHandshake, Link as LinkIcon, Sparkles, Stethoscope } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useSEO } from "@/hooks/useSEO";
+import PageHeader from "@/components/marketing/PageHeader";
+import TeamMemberSection from "@/components/ui/team-member";
+import FAQSection from "@/components/FAQsection";
+import BookSessionButton from "@/components/marketing/BookSessionButton";
+import { FinalCtaBand, Section } from "@/components/marketing/Section";
 
-/* ----------------------------- Data ----------------------------- */
+const ctaPrimary =
+  "inline-flex min-h-11 w-full items-center justify-center rounded-full px-6 py-3 text-sm font-bold transition hover:brightness-95 sm:w-auto";
 
-const values = [
-  { label: "Inclusive", icon: Sparkles, text: "Everyone is welcome, with or without a diagnosis." },
-  { label: "Sustainable", icon: Heart, text: "Prioritise long-term wellbeing over constant productivity." },
-  { label: "Empowering", icon: ShieldCheck, text: "Help users understand themselves and build systems that work." },
-  { label: "Personalised", icon: Users, text: "Adapt support to the individual, not the average user." },
+const buildSteps = [
+  {
+    step: "01",
+    title: "Listen first",
+    body: "We start with what neurodivergent adults say is missing — energy, focus, work, everyday friction.",
+    icon: Ear,
+  },
+  {
+    step: "02",
+    title: "Test in real days",
+    body: "We try ideas with people who use NeuroDiver and notice what feels overwhelming or actually helps.",
+    icon: Sparkles,
+  },
+  {
+    step: "03",
+    title: "Make the next step obvious",
+    body: "We keep refining until support feels practical, respectful and reachable on an ordinary Tuesday.",
+    icon: HeartHandshake,
+  },
 ];
 
-// Replace with the real milestones/dates.
-const milestones = [
-  { title: "It Started with a Question", text: "Why does work feel so much harder for some people than others—even when they're just as capable? This question became the foundation of NeuroDiver." },
-  { title: "Building with Lived Experience", text: "Instead of assuming what people needed, we listened, tested, and designed alongside neurodivergent working adults to understand the everyday friction they face at work." },
-  { title: "From Research to Pilot", text: "We turned those insights into practical tools—from work energy check-ins to strategy guides and body doubling sessions—and began piloting them with real users." },
-  { title: "Building What's Next", text: "Today, we're continuing to refine NeuroDiver with feedback from individuals and organisations as we work towards a more inclusive future of work." },
+const roots: { icon: LucideIcon; title: string; body: string }[] = [
+  {
+    icon: HeartHandshake,
+    title: "Lived experience in the room",
+    body: "Facilitation, community work and product design shaped by people who know these days from the inside.",
+  },
+  {
+    icon: Sparkles,
+    title: "Tools, not lectures",
+    body: "Body doubling, check-ins and strategies — built for moments when you need a hand, not a homework list.",
+  },
+  {
+    icon: Stethoscope,
+    title: "Advisers in the loop",
+    body: "Clinical psychology advisers help us keep guidance practical and responsible.",
+  },
 ];
 
-/* --------------------------- Sub-parts --------------------------- */
-
-function ValuesOrbit() {
-  // Fixed cardinal positions (top, right, bottom, left) to match a 4-value layout
-  const positions = [
-    "left-1/2 top-0 -translate-x-1/2 -translate-y-1/2",
-    "left-full top-1/2 -translate-x-1/2 -translate-y-1/2",
-    "left-1/2 top-full -translate-x-1/2 -translate-y-1/2",
-    "left-0 top-1/2 -translate-x-1/2 -translate-y-1/2",
-  ];
-
-  return (
-    <div className="mx-auto">
-      {/* Desktop / tablet: circle layout, matches reference image */}
-      <div className="relative mx-auto hidden h-[300px] w-[300px] sm:block sm:h-[360px] sm:w-[360px] md:h-[420px] md:w-[420px]">
-        {/* Outer ring */}
-        <div className="absolute inset-0 rounded-full border border-white/15" />
-        {/* Radial glow */}
-        <div
-          className="absolute inset-0 rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle at center, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 45%, transparent 70%)",
-          }}
-        />
-
-        {values.map((value, index) => (
-          <motion.div
-            key={value.label}
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
-            className={`group absolute flex flex-col items-center gap-2 ${positions[index]}`}
-          >
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-yellow text-primary shadow-[0_8px_24px_rgba(0,0,0,0.25)] transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16">
-              <value.icon className="h-6 w-6" strokeWidth={1.75} />
-            </div>
-            <p className="whitespace-nowrap text-sm font-semibold text-white md:text-base">
-              {value.label}
-            </p>
-            <p className="hidden max-w-40 text-center text-xs leading-snug text-white/60 md:block">
-              {value.text}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Mobile: simple 2-column card grid instead of the circle */}
-      <div className="grid grid-cols-2 gap-4 sm:hidden">
-        {values.map((value, index) => (
-          <motion.div
-            key={value.label}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.5, delay: index * 0.08, ease: "easeOut" }}
-            className="flex flex-col items-center gap-2 rounded-3xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm"
-          >
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow text-primary">
-              <value.icon className="h-5 w-5" strokeWidth={1.75} />
-            </div>
-            <p className="text-sm font-semibold text-white">{value.label}</p>
-            <p className="text-xs leading-snug text-white/60">{value.text}</p>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TimelineItem({ milestone, index }: { milestone: (typeof milestones)[number]; index: number }) {
-  const isLeft = index % 2 === 0;
-
-  return (
-    <div className={`relative flex py-8 pl-12 md:py-14 md:pl-0 ${isLeft ? "md:justify-start" : "md:justify-end"}`}>
-      <motion.div
-        initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, amount: 0.5 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`w-full text-left md:w-[42%] ${isLeft ? "md:pr-10 md:text-right" : "md:pl-10 md:text-left"}`}
-      >
-        {/* <p className="text-xs font-semibold uppercase tracking-widest text-orange">{milestone.year}</p> */}
-        <h3 className="mt-1 font-serif text-xl text-orange md:text-2xl">{milestone.title}</h3>
-        <p className="mt-2 text-primary/70 leading-relaxed">{milestone.text}</p>
-      </motion.div>
-
-      {/* Dot: left edge on mobile, centered on md+ */}
-      <div className="absolute left-0 top-8 flex h-8 w-8 items-center justify-center rounded-full border-2 border-orange bg-cream md:left-1/2 md:top-14 md:-translate-x-1/2">
-        <motion.div
-          initial={{ scale: 0 }}
-          whileInView={{ scale: 1 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.3, delay: 0.15 }}
-        >
-          <Check className="h-4 w-4 text-orange" />
-        </motion.div>
-      </div>
-    </div>
-  );
-}
-
-function Timeline() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 0.65", "end 0.5"],
-  });
-
-  return (
-    <div ref={containerRef} className="relative mx-auto max-w-3xl">
-      {/* Track: left edge on mobile, centered on md+ */}
-      <div className="absolute left-4 top-0 h-full w-px -translate-x-1/2 bg-primary/10 md:left-1/2" />
-      {/* Progress fill, tied to scroll */}
-      <motion.div
-        style={{ scaleY: scrollYProgress }}
-        className="absolute left-4 top-0 h-full w-px origin-top -translate-x-1/2 bg-orange md:left-1/2"
-      />
-
-      {milestones.map((milestone, index) => (
-        <TimelineItem key={milestone.title} milestone={milestone} index={index} />
-      ))}
-    </div>
-  );
-}
-
-/* ------------------------------ Page ------------------------------ */
+const advisers = [
+  { name: "Izzat Zaid", role: "Clinical psychology adviser" },
+  { name: "Shaleen Chrisanne", role: "Clinical psychology adviser" },
+  { name: "Kiran Kaur", role: "Clinical psychology adviser" },
+];
 
 export default function AboutUs() {
   useSEO({
-    title: "About Us — The Team Behind NeuroDiver",
+    title: "About NeuroDiver | Built with Neurodivergent Adults",
     description:
-      "NeuroDiver was built by neurodivergent people, for neurodivergent people. Meet the team, learn our story, and see the values that guide everything we build.",
+      "NeuroDiver is a support platform built with neurodivergent adults. Meet the team and learn how we design practical tools for real days.",
     path: "/about",
-    image: "https://www.neurodiver.co/images/team-neurodiver.jpg",
   });
+
   return (
     <>
-      {/* Hero: team photo + heading */}
-      <section className="relative flex h-[55vh] min-h-[380px] items-end overflow-hidden md:h-[65vh] md:min-h-[420px]">
-        <img
-          src="/images/team-neurodiver.jpg"
-          alt="The NeuroDiver team"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-linear-to-t from-primary-dark via-primary-dark/50 to-transparent" />
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="relative z-10 w-full px-6 pb-10 text-center md:pb-16"
-        >
-          {/* <p className="text-xs font-semibold uppercase tracking-widest text-yellow sm:text-sm">
-            Built by ND, for ND
-          </p> */}
-          <h1 className="mt-3 font-serif text-3xl text-white sm:text-4xl md:text-6xl [text-shadow:0_2px_12px_rgba(0,0,0,0.4)]">
-            About us
-          </h1>
-        </motion.div>
-      </section>
+      <PageHeader
+        eyebrow="About NeuroDiver"
+        title="We are building support that makes room for different brains."
+        description="We listened to neurodivergent adults describe friction with energy, focus and work — then built practical support around those moments."
+      />
 
-      <TeamMemberSection />
-
-      {/* Origin story
-      <section className="bg-white px-6 py-14 sm:py-20 md:py-28">
-        <div className="mx-auto grid max-w-5xl gap-8 sm:gap-10 md:grid-cols-2 md:items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
-            <p className="text-sm font-semibold uppercase tracking-widest text-orange">
-              How it started
+      {/* Origin */}
+      <Section className="overflow-x-clip border-t border-line bg-soft py-12 md:py-24">
+        <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-14">
+          <div className="min-w-0">
+            <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-primary-light">
+              Why we exist
             </p>
-            <h2 className="mt-3 font-serif text-2xl leading-tight text-primary sm:text-3xl md:text-4xl">
-              We didn't set out to build a productivity app.
+            <h2 className="font-display mt-3 text-2xl text-primary sm:text-3xl md:text-4xl">
+              From lived experience to useful tools.
             </h2>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-            className="rounded-4xl border-2 border-dashed border-yellow bg-cream p-6 md:p-8"
-          >
-            <p className="text-primary/70 leading-relaxed">
-              One of our co-founders spent years cycling through planners, apps, and
-              routines that were built for a brain that wasn't theirs. Every "just be
-              consistent" tip made things worse, not better. NeuroDiver started as a
-              rough spreadsheet to track energy instead of time — and it worked well
-              enough that friends asked to use it too. That's the whole origin story:
-              no big pitch deck, just a tool that finally made sense.
+            <p className="mt-4 text-base leading-relaxed text-muted sm:mt-5 sm:text-lg">
+              The team combines lived experience, facilitation, community work and product
+              design. We test with the people who use NeuroDiver, learn from what feels
+              overwhelming, and keep making the next step easier to find.
             </p>
-          </motion.div>
+            <blockquote className="mt-6 rounded-[20px] border border-line bg-paper p-5 sm:mt-8">
+              <p className="font-display text-lg leading-snug text-primary sm:text-xl">
+                &ldquo;We want support to feel practical, respectful and possible to use on an
+                ordinary Tuesday.&rdquo;
+              </p>
+              <footer className="mt-3 text-sm font-medium text-muted">— NeuroDiver team</footer>
+            </blockquote>
+          </div>
+          <ul className="grid min-w-0 gap-3 sm:gap-4">
+            {roots.map(({ icon: Icon, title, body }) => (
+              <li
+                key={title}
+                className="flex gap-3 rounded-[20px] border border-line bg-paper p-4 sm:gap-4 sm:p-5"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-lime/25 text-brand">
+                  <Icon className="h-5 w-5" aria-hidden />
+                </span>
+                <div className="min-w-0">
+                  <p className="font-semibold text-primary">{title}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted">{body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
-      </section> */}
+      </Section>
 
-      {/* Values orbit */}
-      <section className="bg-primary-dark px-6 py-14 sm:py-20 md:py-28">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-yellow">
-            What we stand for
+      {/* How we build */}
+      <Section className="overflow-x-clip bg-paper py-12 md:py-24">
+        <div className="max-w-3xl text-left md:mx-auto md:text-center">
+          <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-primary-light">
+            How we work
           </p>
-          <h2 className="mt-3 mb-30  font-serif text-2xl text-white sm:text-3xl md:text-4xl">
-            Values that orbit everything we build.
+          <h2 className="font-display mt-3 text-2xl text-primary sm:text-3xl md:text-4xl">
+            Design with people, not just for them.
           </h2>
-        </div>
-
-        <div className="mt-16 mb-30 sm:mt-16">
-          <ValuesOrbit />
-        </div>
-      </section>
-
-      {/* Timeline */}
-      <section className="bg-cream px-6 py-14 sm:py-20 md:py-28">
-        <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-16">
-          <p className="text-sm font-semibold uppercase tracking-widest text-orange">
-            Our journey
+          <p className="mt-3 text-base text-muted sm:mt-4 sm:text-lg">
+            A simple loop — listen, test, simplify — so the product stays grounded in real
+            workdays.
           </p>
-          <h2 className="mt-3 font-serif text-2xl text-primary sm:text-3xl md:text-4xl">
-            One milestone at a time.
-          </h2>
         </div>
+        <div className="relative mx-auto mt-8 max-w-5xl md:mt-12">
+          <div
+            className="pointer-events-none absolute left-[16%] right-[16%] top-14 hidden h-0.5 bg-gradient-to-r from-lime/20 via-lime/50 to-lime/20 md:block"
+            aria-hidden
+          />
+          <ol className="flex flex-col md:grid md:grid-cols-3 md:gap-6">
+            {buildSteps.map(({ step, title, body, icon: Icon }, index) => (
+              <li
+                key={step}
+                className="relative min-w-0 pb-8 pl-10 last:pb-0 md:rounded-[20px] md:border md:border-line md:bg-soft md:p-6 md:pb-6 md:pl-6 md:pt-8"
+              >
+                {index < buildSteps.length - 1 ? (
+                  <span
+                    className="absolute bottom-0 left-[15px] top-9 w-0.5 bg-lime/35 md:hidden"
+                    aria-hidden
+                  />
+                ) : null}
+                <span className="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-lime text-xs font-bold text-primary-dark md:left-1/2 md:-top-4 md:h-9 md:w-9 md:-translate-x-1/2 md:text-sm">
+                  {step}
+                </span>
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-soft text-brand ring-1 ring-line md:mx-auto md:mt-2 md:ring-0">
+                  <Icon className="h-5 w-5" aria-hidden />
+                </span>
+                <p className="mt-3 font-display text-lg text-primary sm:text-xl md:mt-4 md:text-center">
+                  {title}
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted md:mt-2 md:text-center">
+                  {body}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </Section>
 
-        <Timeline />
-      </section>
+      {/* Team */}
+      <Section id="team" className="scroll-mt-24 overflow-x-clip bg-soft py-12 md:py-24">
+        <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-primary-light">
+              The humans
+            </p>
+            <h2 className="font-display mt-3 text-2xl text-primary sm:text-3xl md:text-4xl">
+              Meet the people behind NeuroDiver.
+            </h2>
+            <p className="mt-3 max-w-2xl text-base text-muted sm:mt-4 sm:text-lg">
+              Co-founders and builders — plus clinical advisers who help us shape responsible
+              support.
+            </p>
+          </div>
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-brand hover:underline"
+          >
+            Say hello
+            <LinkIcon className="h-3.5 w-3.5" aria-hidden />
+          </Link>
+        </div>
+        <TeamMemberSection showIntro={false} />
+      </Section>
+
+      {/* Advisers */}
+      <Section className="overflow-x-clip border-t border-line bg-paper py-12 md:py-20">
+        <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-primary-light">
+          Clinical advisers
+        </p>
+        <h2 className="font-display mt-3 text-2xl text-primary sm:text-3xl">
+          Shaped with professional guidance.
+        </h2>
+        <p className="mt-3 max-w-2xl text-base text-muted sm:text-lg">
+          Our advisers inform how we talk about strategies and wellbeing — without turning
+          NeuroDiver into a clinical service.
+        </p>
+        <ul className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-3 sm:gap-4">
+          {advisers.map(({ name, role }) => (
+            <li
+              key={name}
+              className="rounded-[20px] border border-line bg-soft px-4 py-5 text-center sm:px-5"
+            >
+              <p className="font-semibold text-primary">{name}</p>
+              <p className="mt-1 text-sm text-muted">{role}</p>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <FAQSection />
+
+      <FinalCtaBand
+        title="See what we have built so far."
+        body="Explore the toolkit, book a body doubling session, or get in touch if you are exploring a workplace pilot."
+      >
+        <Link to="/tools" className={`${ctaPrimary} bg-brand text-paper`}>
+          Explore the tools
+        </Link>
+        <BookSessionButton className="w-full sm:w-auto">
+          Book a body doubling session
+        </BookSessionButton>
+      </FinalCtaBand>
     </>
   );
 }
