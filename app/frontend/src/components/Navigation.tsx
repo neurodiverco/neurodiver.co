@@ -1,22 +1,57 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { motion } from "motion/react";
 import BookSessionButton from "./marketing/BookSessionButton";
 
 const navLinks = [
-  { to: "/body-doubling", label: "Body Doubling", tone: "muted" as const },
-  { to: "/tools", label: "Tools", tone: "primary" as const },
-  { to: "/for-organisations", label: "For Organisations", tone: "muted" as const },
-  { to: "/about", label: "About", tone: "primary" as const },
+  { to: "/body-doubling", label: "Body Doubling" },
+  { to: "/tools", label: "Tools" },
+  { to: "/for-organisations", label: "For Organisations" },
+  { to: "/about", label: "About" },
+  { to: "/pricing", label: "Pricing" },
 ];
 
-function linkClass(isActive: boolean, tone: "muted" | "primary") {
-  const base =
-    "text-lg font-bold tracking-tight transition-colors xl:text-xl";
-  if (isActive) return `${base} text-brand`;
-  return tone === "primary"
-    ? `${base} text-primary hover:text-brand`
-    : `${base} text-muted hover:text-primary`;
+const pillSpring = { type: "spring" as const, stiffness: 400, damping: 32, mass: 0.8 };
+
+function NavTab({
+  to,
+  label,
+  layoutId,
+  onNavigate,
+  className = "",
+}: {
+  to: string;
+  label: string;
+  layoutId: string;
+  onNavigate?: () => void;
+  className?: string;
+}) {
+  return (
+    <NavLink
+      to={to}
+      onClick={onNavigate}
+      className={({ isActive }) =>
+        `relative inline-flex items-center rounded-full px-4 py-2.5 text-lg font-bold tracking-tight transition-colors xl:px-5 xl:py-2.5 xl:text-xl ${
+          isActive ? "text-brand" : "text-muted hover:text-primary"
+        } ${className}`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          {isActive ? (
+            <motion.span
+              layoutId={layoutId}
+              className="absolute inset-0 rounded-full bg-soft shadow-[inset_0_0_0_1px_rgba(206,217,205,0.9)]"
+              transition={pillSpring}
+              aria-hidden
+            />
+          ) : null}
+          <span className="relative z-10 whitespace-nowrap">{label}</span>
+        </>
+      )}
+    </NavLink>
+  );
 }
 
 export default function Navigation() {
@@ -36,12 +71,10 @@ export default function Navigation() {
           />
         </Link>
 
-        <ul className="ml-auto hidden items-center gap-6 lg:flex xl:gap-10">
-          {navLinks.map(({ to, label, tone }) => (
+        <ul className="ml-auto hidden items-center gap-1 lg:flex xl:gap-1.5">
+          {navLinks.map(({ to, label }) => (
             <li key={to}>
-              <NavLink to={to} className={({ isActive }) => linkClass(isActive, tone)}>
-                {label}
-              </NavLink>
+              <NavTab to={to} label={label} layoutId="desktop-nav-pill" />
             </li>
           ))}
         </ul>
@@ -58,7 +91,7 @@ export default function Navigation() {
             variant="secondary"
             className="min-h-10 px-3.5 py-2 text-xs font-bold sm:min-h-11 sm:px-5 sm:py-2.5 sm:text-sm lg:px-6 lg:text-base xl:px-8 xl:text-lg"
           >
-            <span className="sm:hidden">Book a session</span>
+            <span className="sm:hidden">Book</span>
             <span className="hidden sm:inline">Book a session</span>
           </BookSessionButton>
 
@@ -84,27 +117,41 @@ export default function Navigation() {
           id="mobile-main-nav"
           className="border-t border-line bg-paper lg:hidden"
         >
-          <ul className="mx-auto max-w-7xl px-5 py-4">
-            {navLinks.map(({ to, label, tone }) => (
+          <ul className="mx-auto max-w-7xl space-y-1 px-5 py-4">
+            {navLinks.map(({ to, label }) => (
               <li key={to}>
-                <NavLink
+                <NavTab
                   to={to}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `block py-3 ${linkClass(isActive, tone)}`
-                  }
-                >
-                  {label}
-                </NavLink>
+                  label={label}
+                  layoutId="mobile-nav-pill"
+                  onNavigate={() => setIsMenuOpen(false)}
+                  className="w-full px-3 py-3"
+                />
               </li>
             ))}
             <li>
               <NavLink
                 to="/contact"
                 onClick={() => setIsMenuOpen(false)}
-                className="block py-3 text-lg font-bold text-brand xl:text-xl"
+                className={({ isActive }) =>
+                  `relative inline-flex w-full items-center rounded-full px-3 py-3 text-lg font-bold xl:text-xl ${
+                    isActive ? "text-brand" : "text-brand/80 hover:text-brand"
+                  }`
+                }
               >
-                Contact
+                {({ isActive }) => (
+                  <>
+                    {isActive ? (
+                      <motion.span
+                        layoutId="mobile-nav-pill"
+                        className="absolute inset-0 rounded-full bg-soft shadow-[inset_0_0_0_1px_rgba(206,217,205,0.9)]"
+                        transition={pillSpring}
+                        aria-hidden
+                      />
+                    ) : null}
+                    <span className="relative z-10">Contact</span>
+                  </>
+                )}
               </NavLink>
             </li>
           </ul>

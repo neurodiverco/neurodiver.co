@@ -9,6 +9,9 @@ import ForOrganisations from "./pages/ForOrganisations";
 import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import BlogPost from "./pages/BlogPost";
+import Neuroflow from "./pages/Neuroflow";
+import NeuroflowHowToUse from "./pages/NeuroflowHowToUse";
+import Pricing from "./pages/Pricing";
 
 function App() {
   return (
@@ -18,12 +21,15 @@ function App() {
           <Route index element={<Home />} />
           <Route path="body-doubling" element={<BodyDoubling />} />
           <Route path="tools" element={<Tools />} />
+          <Route path="pricing" element={<Pricing />} />
           <Route path="for-organisations" element={<ForOrganisations />} />
           <Route path="about" element={<AboutUs />} />
           <Route path="contact" element={<Contact />} />
           <Route path="blog" element={<Blog />} />
           <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="blog/:slug" element={<BlogPost />} />
+          <Route path="neuroflow" element={<Neuroflow />} />
+          <Route path="neuroflow/how-to-use" element={<NeuroflowHowToUse />} />
           <Route path="individuals" element={<Navigate to="/tools" replace />} />
           <Route path="organisations" element={<Navigate to="/for-organisations" replace />} />
         </Route>

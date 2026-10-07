@@ -8,6 +8,7 @@ import PageHeader from "@/components/marketing/PageHeader";
 import BookSessionButton from "@/components/marketing/BookSessionButton";
 import { FinalCtaBand } from "@/components/marketing/Section";
 import FAQSection from "@/components/FAQsection";
+import Reveal, { RevealSection } from "@/components/Reveal";
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -101,14 +102,14 @@ export default function BlogPost() {
         </span>
       </PageHeader>
 
-      <div className="mx-auto max-w-3xl px-6 pb-4">
+      <Reveal as="div" className="mx-auto max-w-3xl px-6 pb-4">
         <div className="overflow-hidden rounded-[20px] border border-line shadow-md">
           <img src={post.image} alt="" className="aspect-video w-full object-cover" />
         </div>
-      </div>
+      </Reveal>
 
       {/* Article body */}
-      <article className="px-6 pb-20 pt-8 md:pb-28 md:pt-12">
+      <Reveal as="article" className="px-6 pb-20 pt-8 md:pb-28 md:pt-12">
         <div className="mx-auto max-w-3xl">
           <motion.p
             initial={{ opacity: 0, y: 12 }}
@@ -159,11 +160,11 @@ export default function BlogPost() {
             </p>
           </motion.div>
         </div>
-      </article>
+      </Reveal>
 
       {/* Related posts */}
       {related.length > 0 && (
-        <section className="border-t border-primary/10 bg-white px-6 py-16 md:py-20">
+        <RevealSection className="border-t border-primary/10 bg-white px-6 py-16 md:py-20">
           <div className="mx-auto max-w-5xl">
             <h2 className="font-serif text-2xl text-primary md:text-3xl">
               More on {post.category}
@@ -196,7 +197,7 @@ export default function BlogPost() {
               ))}
             </div>
           </div>
-        </section>
+        </RevealSection>
       )}
 
       <FAQSection />

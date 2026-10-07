@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Reveal from "@/components/Reveal";
 
 type PageHeaderProps = {
   eyebrow?: string;
@@ -21,7 +22,8 @@ export default function PageHeader({
   compact = false,
 }: PageHeaderProps) {
   return (
-    <section
+    <Reveal
+      as="section"
       className={`relative overflow-hidden bg-primary-dark ${
         compact ? "px-6 py-10 md:py-12" : "px-6 py-12 md:px-8 md:py-16 lg:px-10 lg:py-[4.5rem] xl:px-12 xl:py-24"
       } ${
@@ -108,6 +110,6 @@ export default function PageHeader({
           ) : null}
         </div>
       </div>
-    </section>
+    </Reveal>
   );
 }

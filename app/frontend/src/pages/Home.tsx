@@ -6,6 +6,7 @@ import HeroVisual from "@/components/marketing/HeroVisual";
 import FeatureRow from "@/components/marketing/FeatureRow";
 import FAQSection from "@/components/FAQsection";
 import { FinalCtaBand } from "@/components/marketing/Section";
+import { RevealSection } from "@/components/Reveal";
 import { APP_SIGN_IN_URL } from "@/constants/site";
 
 const recognitionCards = [
@@ -24,13 +25,6 @@ const recognitionCards = [
     action: "Explore strategies.",
     to: "/tools",
   },
-];
-
-const sessionSteps = [
-  { title: "Choose a session", body: "Open the app and pick a time that works for you." },
-  { title: "Sign in or create an account", body: "New to NeuroDiver? Create an account to book." },
-  { title: "Bring one task", body: "Name a small first step — work, study or admin." },
-  { title: "Focus together", body: "Join the room, work quietly, and wrap up when the session ends." },
 ];
 
 export default function Home() {
@@ -68,7 +62,7 @@ export default function Home() {
       </PageHeader>
 
       {/* 02 RECOGNITION */}
-      <section className="border-t border-line bg-paper px-6 py-16 md:py-20">
+      <RevealSection className="border-t border-line bg-paper px-6 py-16 md:py-20">
         <div className="mx-auto max-w-6xl text-center">
           <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-primary-light">
             Sound familiar?
@@ -99,9 +93,9 @@ export default function Home() {
             </li>
           ))}
         </ul>
-      </section>
+      </RevealSection>
 
-      <section className="border-y border-line bg-soft px-6 py-12 md:py-16">
+      <RevealSection className="border-y border-line bg-soft px-6 py-12 md:py-16">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-primary-light">
             Three ways to find support
@@ -114,7 +108,7 @@ export default function Home() {
             another when you need it.
           </p>
         </div>
-      </section>
+      </RevealSection>
 
       <FeatureRow
         title="Body doubling"
@@ -126,7 +120,7 @@ export default function Home() {
           />
         }
         mediaLabel="Book a session"
-        cta={{ label: "Book a session", href: APP_SIGN_IN_URL, external: true }}
+        cta={{ label: "Learn more", href: "/body-doubling" }}
       />
 
       <FeatureRow
@@ -157,7 +151,7 @@ export default function Home() {
         mediaLabel="Find one step"
         cta={{ label: "Explore all tools", href: "/tools" }}
       />
-
+{/* 
       <section className="bg-primary-dark px-6 py-16 text-paper md:py-24">
         <div className="mx-auto max-w-6xl">
           <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-lime">
@@ -187,9 +181,9 @@ export default function Home() {
             <BookSessionButton variant="on-dark">Book a body doubling session</BookSessionButton>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      <section className="px-6 py-16 md:py-24">
+      <RevealSection className="px-6 py-16 md:py-24">
         <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:items-center">
           <div>
             <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-primary-light">
@@ -219,7 +213,7 @@ export default function Home() {
             <p className="mt-4 text-sm font-medium text-muted">— NeuroDiver team</p>
           </div>
         </div>
-      </section>
+      </RevealSection>
 
       {/* <section className="border-t border-line bg-soft px-6 py-16 md:py-20">
         <div className="mx-auto max-w-3xl text-center">

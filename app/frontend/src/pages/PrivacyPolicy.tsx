@@ -5,6 +5,7 @@ import { Mail, MapPin } from "lucide-react";
 import PageHeader from "@/components/marketing/PageHeader";
 import FAQSection from "@/components/FAQsection";
 import { FinalCtaBand } from "@/components/marketing/Section";
+import { RevealSection } from "@/components/Reveal";
 
 interface Section {
   id: string;
@@ -284,7 +285,7 @@ export default function PrivacyPolicy() {
         title="Privacy Policy"
         compact
       />
-    <section className="bg-paper px-6 py-12 md:py-16">
+    <RevealSection className="bg-paper px-6 py-12 md:py-16">
       <div className="mx-auto max-w-3xl">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -375,7 +376,7 @@ export default function PrivacyPolicy() {
           </div>
         </motion.div>
       </div>
-    </section>
+    </RevealSection>
 
       <FAQSection />
 

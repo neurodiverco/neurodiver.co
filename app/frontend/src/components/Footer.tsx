@@ -4,6 +4,7 @@ import { CONTACT_EMAIL } from "@/constants/site";
 const footerLinks = [
   { label: "Body Doubling", to: "/body-doubling" },
   { label: "Tools", to: "/tools" },
+  { label: "Pricing", to: "/pricing" },
   { label: "For Organisations", to: "/for-organisations" },
   { label: "About", to: "/about" },
   { label: "Contact", to: "/contact" },

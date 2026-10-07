@@ -7,6 +7,7 @@ import PageHeader from "@/components/marketing/PageHeader";
 import BookSessionButton from "@/components/marketing/BookSessionButton";
 import { FinalCtaBand } from "@/components/marketing/Section";
 import FAQSection from "@/components/FAQsection";
+import { RevealSection } from "@/components/Reveal";
 import { AnimatePresence, motion } from "motion/react";
 import { CheckCircle2 } from "lucide-react";
 import { useSEO } from "../hooks/useSEO";
@@ -177,7 +178,7 @@ export default function Contact() {
         compact
       />
 
-    <section className="flex min-h-0 items-center justify-center bg-soft px-6 py-16">
+    <RevealSection className="flex min-h-0 items-center justify-center bg-soft px-6 py-16">
       <div className="mx-auto w-full max-w-2xl">
         {/* Card */}
         <div className="rounded-4xl border border-primary/10 bg-white p-6 shadow-[0_25px_60px_rgba(45,90,61,0.1)] md:p-10">
@@ -474,7 +475,7 @@ export default function Contact() {
           </AnimatePresence>
         </div>
       </div>
-    </section>
+    </RevealSection>
 
       <FAQSection />
 

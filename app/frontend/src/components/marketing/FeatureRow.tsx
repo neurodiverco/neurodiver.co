@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Reveal from "@/components/Reveal";
 import AppScreen from "./AppScreen";
 
 type FeatureRowProps = {
@@ -21,7 +22,7 @@ export default function FeatureRow({
   className = "bg-paper",
 }: FeatureRowProps) {
   return (
-    <section className={`px-6 py-16 md:py-24 ${className}`}>
+    <Reveal as="section" className={`px-6 py-16 md:py-24 ${className}`}>
       <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-16">
         <div className={reverse ? "md:order-2" : undefined}>
           <h2 className="font-display text-3xl leading-tight text-primary md:text-4xl">
@@ -50,6 +51,6 @@ export default function FeatureRow({
           <AppScreen label={mediaLabel}>{media}</AppScreen>
         </div>
       </div>
-    </section>
+    </Reveal>
   );
 }

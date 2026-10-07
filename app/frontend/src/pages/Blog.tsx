@@ -9,6 +9,7 @@ import PageHeader from "@/components/marketing/PageHeader";
 import BookSessionButton from "@/components/marketing/BookSessionButton";
 import { FinalCtaBand } from "@/components/marketing/Section";
 import FAQSection from "@/components/FAQsection";
+import Reveal from "@/components/Reveal";
 
 interface BlogPost {
   slug: string;
@@ -189,7 +190,7 @@ export default function Blog() {
         description="Practical articles on ADHD, executive dysfunction, neurodiversity at work, and sustainable ways of working."
         compact
       />
-      <div className="mx-auto max-w-6xl px-6 py-12 md:py-16">
+      <Reveal as="div" className="mx-auto max-w-6xl px-6 py-12 md:py-16">
 
         {/* Search */}
         <div className="mx-auto mb-6 max-w-md">
@@ -251,7 +252,7 @@ export default function Blog() {
             <p className="mt-2 text-primary/60">Try a different keyword or category.</p>
           </motion.div>
         )}
-      </div>
+      </Reveal>
 
       <FAQSection />
 

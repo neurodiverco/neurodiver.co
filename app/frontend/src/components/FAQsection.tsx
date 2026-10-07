@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Plus } from "lucide-react";
 import { marketingFaqs } from "@/data/faq";
+import Reveal from "@/components/Reveal";
 
 export default function FAQSection() {
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
@@ -11,7 +12,7 @@ export default function FAQSection() {
   };
 
   return (
-    <section className="bg-soft px-6 py-16 md:py-24">
+    <Reveal as="section" className="bg-soft px-6 py-16 md:py-24">
       <div className="mx-auto max-w-3xl">
         <h2 className="font-display text-center text-3xl text-primary md:text-4xl">
           Questions you might have
@@ -58,6 +59,6 @@ export default function FAQSection() {
           })}
         </ul>
       </div>
-    </section>
+    </Reveal>
   );
 }
